@@ -1,0 +1,54 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build
+dist/
+
+# Environment
+.env
+.env.local
+.env.development
+.env.production
+
+# GCP
+*.json
+!package.json
+!tsconfig.json
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# PM2
+.pm2/
+ecosystem.config.js
+
+# Documentation
+*.md
+!README.md
+
+# Scripts
+setup.sh
+test-api.sh
+
+# Others
+tmp/
+temp/
+*.tmp

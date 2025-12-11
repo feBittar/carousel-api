@@ -16,6 +16,7 @@ dist/
 # GCP
 *.json
 !package.json
+!package-lock.json
 !tsconfig.json
 
 # Git

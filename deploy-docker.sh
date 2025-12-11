@@ -69,7 +69,7 @@ fi
 echo ""
 echo "🔨 [2/4] Construindo imagem Docker..."
 
-docker compose build --no-cache
+docker compose build
 
 echo "✅ Imagem construída com sucesso"
 

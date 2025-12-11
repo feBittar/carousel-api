@@ -93,7 +93,7 @@ function calculateViewport(slideCount: number = 1): {
  */
 function generateModulesCSS(
   modulesData: Record<string, ModuleData>,
-  context: RenderContext
+  _context: RenderContext
 ): string {
   const cssParts: string[] = [];
 
@@ -127,7 +127,7 @@ function generateModulesCSS(
  */
 function generateModulesHTML(
   modulesData: Record<string, ModuleData>,
-  context: RenderContext
+  _context: RenderContext
 ): string {
   const htmlParts: string[] = [];
 
@@ -364,7 +364,7 @@ function generateTextFieldsHTML(data: ModuleData): string {
   if (texts.length === 0) return '';
 
   const textElements = texts
-    .map((text: string, index: number) => {
+    .map((text: string) => {
       return `    <div class="text-field"><h1>${sanitizeHtml(text)}</h1></div>`;
     })
     .join('\n');

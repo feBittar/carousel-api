@@ -87,6 +87,7 @@ export class PuppeteerService {
 
       // Wait for fonts to load (important!)
       await page.evaluate(() => {
+        // @ts-ignore - document.fonts exists in browser context
         return document.fonts.ready;
       });
 

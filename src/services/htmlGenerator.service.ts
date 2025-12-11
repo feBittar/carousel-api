@@ -2,7 +2,6 @@ import { composeTemplate } from '../lib/carousel-composer';
 import {
   CarouselConfig,
   SlideConfig,
-  ModuleData,
   ComposedTemplate,
 } from '../lib/carousel-composer/types';
 

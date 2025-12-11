@@ -117,7 +117,7 @@ export class CarouselController {
    * GET /api/health
    * Health check endpoint
    */
-  async healthCheck(req: Request, res: Response): Promise<void> {
+  async healthCheck(_req: Request, res: Response): Promise<void> {
     console.log('[Controller] Health check requested');
 
     try {

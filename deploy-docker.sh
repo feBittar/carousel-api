@@ -56,7 +56,7 @@ fi
 echo "📦 [1/4] Parando containers existentes..."
 
 if docker ps -q --filter "name=carousel-api" | grep -q .; then
-    docker-compose down
+    docker compose down
     echo "✅ Containers parados"
 else
     echo "ℹ️  Nenhum container rodando"
@@ -69,7 +69,7 @@ fi
 echo ""
 echo "🔨 [2/4] Construindo imagem Docker..."
 
-docker-compose build --no-cache
+docker compose build --no-cache
 
 echo "✅ Imagem construída com sucesso"
 
@@ -80,7 +80,7 @@ echo "✅ Imagem construída com sucesso"
 echo ""
 echo "🚀 [3/4] Iniciando containers..."
 
-docker-compose up -d
+docker compose up -d
 
 echo "✅ Containers iniciados"
 
@@ -129,10 +129,10 @@ echo "========================================"
 echo ""
 echo "📊 Comandos úteis:"
 echo ""
-echo "  Ver logs:              docker-compose logs -f"
-echo "  Parar:                 docker-compose down"
-echo "  Reiniciar:             docker-compose restart"
-echo "  Status:                docker-compose ps"
+echo "  Ver logs:              docker compose logs -f"
+echo "  Parar:                 docker compose down"
+echo "  Reiniciar:             docker compose restart"
+echo "  Status:                docker compose ps"
 echo "  Health check manual:   curl http://localhost:3001/api/health"
 echo ""
 echo "🌐 API rodando em: http://localhost:3001"
@@ -146,7 +146,7 @@ if curl -s http://localhost:3001/api/health | grep -q "healthy"; then
     echo "✅ API respondendo corretamente!"
 else
     echo "⚠️  API não respondeu ao health check"
-    echo "Verifique os logs: docker-compose logs"
+    echo "Verifique os logs: docker compose logs"
 fi
 
 echo ""

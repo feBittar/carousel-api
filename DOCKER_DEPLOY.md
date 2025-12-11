@@ -24,14 +24,14 @@ newgrp docker
 docker --version
 ```
 
-### 2. Instalar Docker Compose
+### 2. Verificar Docker Compose
 
 ```bash
-# Docker Compose já vem com Docker moderno, mas se precisar:
-sudo apt-get install docker-compose-plugin
-
-# Verificar
+# Docker Compose já vem com Docker moderno
 docker compose version
+
+# Se não funcionar, instale o plugin:
+sudo apt-get install docker compose-plugin
 ```
 
 ---
@@ -249,7 +249,7 @@ sudo certbot --nginx -d api.gevia.co
 
 ### Volumes Sensíveis
 
-O `docker-compose.yml` monta a chave GCP como **read-only**:
+O `docker compose.yml` monta a chave GCP como **read-only**:
 
 ```yaml
 volumes:

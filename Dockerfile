@@ -84,12 +84,8 @@ RUN npm ci --omit=dev
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Create non-root user
-RUN groupadd -r nodejs && useradd -r -g nodejs nodejs && \
-    chown -R nodejs:nodejs /app
-
-# Switch to non-root user
-USER nodejs
+# Note: Running as root for GCP key file access
+# In production, consider copying the key into the image or using proper volume permissions
 
 # Expose port
 EXPOSE 3001

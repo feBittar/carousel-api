@@ -211,7 +211,7 @@ function generateFinalHtml(params: {
     modulesCSS,
     modulesHTML,
     styleVariables,
-    baseUrl,
+    baseUrl: _baseUrl,
   } = params;
 
   return `<!DOCTYPE html>

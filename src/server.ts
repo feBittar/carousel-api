@@ -66,7 +66,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.use('/api', routes);
 
 // Root endpoint
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     service: 'Carousel API VPS',
     version: '1.0.0',

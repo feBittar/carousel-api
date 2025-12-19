@@ -22,8 +22,9 @@ import { CUSTOM_FONTS } from '@/lib/constants/fonts';
 
 /**
  * Default base URL for assets (fonts, images, etc)
+ * Note: Using process.env instead of import.meta for Node.js compatibility
  */
-const DEFAULT_BASE_URL = import.meta.env.BASE_URL || window.location.origin || 'http://localhost:8080';
+const DEFAULT_BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
 /**
  * Default viewport dimensions (Instagram portrait format 4:5)

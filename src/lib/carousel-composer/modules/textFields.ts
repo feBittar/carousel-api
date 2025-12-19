@@ -11,7 +11,7 @@
  * - By default, fields use flex layout inside the card
  */
 
-import type { TextFieldsModule, TextField, ModuleDefinition, ModuleData, CompositionOptions } from '@/lib/carousel-composer/types';
+import type { TextFieldsModule, TextField, ModuleDefinition, ModuleData, CompositionOptions } from '../types';
 import { applyStyledChunks } from '../utils/richTextConverter';
 
 /**

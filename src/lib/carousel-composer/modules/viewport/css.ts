@@ -6,7 +6,7 @@ import { ViewportData } from './schema';
  * Controla o background do body, blur overlay (::before), e gradient overlay (::after)
  */
 export function getViewportCss(data: ModuleData, options?: CompositionOptions): string {
-  const viewport = data as ViewportData;
+  const viewport = data as unknown as ViewportData;
 
   // CSS para o body (background principal)
   const bodyStyles: string[] = [];
@@ -137,7 +137,7 @@ ${selector} {
  * Outros módulos podem usar essas variáveis
  */
 export function getViewportStyleVariables(data: ModuleData): Record<string, string> {
-  const viewport = data as ViewportData;
+  const viewport = data as unknown as ViewportData;
 
   return {
     '--viewport-bg-color': viewport.backgroundColor,

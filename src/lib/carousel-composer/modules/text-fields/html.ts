@@ -1,12 +1,12 @@
 import { ModuleData, CompositionOptions } from '../../types';
 import { TextFieldsData } from './schema';
-import { applyStyledChunks } from '@/lib/carousel-composer/utils/richTextConverter';
+import { applyStyledChunks } from '../../utils/richTextConverter';
 
 /**
  * Generates HTML for the TextFields module
  */
 export function getTextFieldsHtml(data: ModuleData, options?: CompositionOptions): string {
-  const textFields = data as TextFieldsData;
+  const textFields = data as unknown as TextFieldsData;
 
   // Generate HTML for each active text field
   const textItems = textFields.fields

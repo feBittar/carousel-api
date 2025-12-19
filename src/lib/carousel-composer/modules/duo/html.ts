@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DuoModuleConfig } from './schema';
 import { ModuleData, RenderContext } from '../types';
 

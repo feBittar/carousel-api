@@ -1039,3 +1039,75 @@ export const gradientOverlaySchema = z.object({
 });
 
 export type GradientOverlay = z.infer<typeof gradientOverlaySchema>;
+
+// ==========================================
+// API-specific types (for carousel-api VPS)
+// ==========================================
+
+/**
+ * Configuration for a single slide in the carousel
+ */
+export interface SlideConfig {
+  id: string;
+  order: number;
+  modules: Array<{
+    type: string;
+    data: ModuleData;
+  }>;
+}
+
+/**
+ * Configuration for the entire carousel
+ */
+export interface CarouselConfig {
+  slides: SlideConfig[];
+}
+
+/**
+ * Result of template composition
+ * Alias for CompositionResult for backwards compatibility
+ */
+export type ComposedTemplate = CompositionResult;
+
+// ==========================================
+// Missing exports for API compatibility
+// ==========================================
+
+/**
+ * RenderContext - Context passed to module renderers
+ * Provides slide-level and carousel-level information during rendering
+ */
+export interface RenderContext {
+  slideIndex?: number;
+  totalSlides?: number;
+  carouselId?: string;
+  [key: string]: any;
+}
+
+/**
+ * GenerationOptions - Options for carousel image generation
+ * Used by duo/generation.server.ts and other generation modules
+ */
+export interface GenerationOptions {
+  [key: string]: any;
+}
+
+/**
+ * GenerationResult - Result of carousel generation
+ * Contains the generated HTML and CSS for a slide or carousel
+ */
+export interface GenerationResult {
+  html: string;
+  css: string;
+  [key: string]: any;
+}
+
+/**
+ * ModuleFormProps - Props for module configuration forms
+ * Generic interface for module form components
+ */
+export interface ModuleFormProps<T = any> {
+  data: T;
+  onChange: (data: T) => void;
+  [key: string]: any;
+}

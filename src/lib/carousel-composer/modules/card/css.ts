@@ -69,7 +69,7 @@ function getPositionCSS(position: SpecialPosition, padding: number): string {
  * Generates CSS for the Card module
  */
 export function getCardCss(data: ModuleData): string {
-  const card = data as CardData;
+  const card = data as unknown as CardData;
 
   if (!card.enabled) {
     return '';

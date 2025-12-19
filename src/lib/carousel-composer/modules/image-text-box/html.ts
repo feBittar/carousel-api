@@ -1,6 +1,6 @@
 import { ModuleData, RenderContext } from '../types';
 import { ImageTextBoxData, ImageTextBoxTextField } from './schema';
-import { applyStyledChunks } from '@/lib/utils/richTextConverter';
+import { applyStyledChunks } from '../../utils/richTextConverter';
 
 /**
  * Helper to convert relative URLs to absolute URLs
@@ -76,7 +76,7 @@ function renderTextField(field: ImageTextBoxTextField, index: number): string {
  * Generates HTML for the Image + Text Box module
  */
 export function getImageTextBoxHtml(data: ModuleData, context?: RenderContext): string {
-  const boxData = data as ImageTextBoxData;
+  const boxData = data as unknown as ImageTextBoxData;
 
   if (!boxData.enabled) {
     return '';

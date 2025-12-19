@@ -32,7 +32,7 @@ function getJustifyContent(align: 'top' | 'center' | 'bottom'): string {
  * Generates CSS for the Image + Text Box module
  */
 export function getImageTextBoxCss(data: ModuleData): string {
-  const boxData = data as ImageTextBoxData;
+  const boxData = data as unknown as ImageTextBoxData;
 
   if (!boxData.enabled) {
     return `

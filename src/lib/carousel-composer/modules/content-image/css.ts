@@ -5,7 +5,7 @@ import { ContentImageData } from './schema';
  * Generates CSS for the Content Image module
  */
 export function getContentImageCss(data: ModuleData): string {
-  const contentImage = data as ContentImageData;
+  const contentImage = data as unknown as ContentImageData;
 
   if (!contentImage.enabled) {
     return `

@@ -8,7 +8,7 @@ import { CardData } from './schema';
  * The compositer will inject content modules inside this container.
  */
 export function getCardHtml(data: ModuleData): string {
-  const card = data as CardData;
+  const card = data as unknown as CardData;
 
   if (!card.enabled) {
     return '';

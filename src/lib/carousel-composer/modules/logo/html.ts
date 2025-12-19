@@ -26,7 +26,7 @@ function resolveUrl(url: string, baseUrl?: string): string {
  * Generates HTML for the Logo Module
  */
 export function getLogoHtml(data: ModuleData, context?: RenderContext): string {
-  const logoData = data as LogoData;
+  const logoData = data as unknown as LogoData;
   const { enabled, logoUrl } = logoData;
 
   // Don't render if disabled or no logo URL
@@ -49,7 +49,7 @@ export function getLogoHtml(data: ModuleData, context?: RenderContext): string {
  * Used by legacy templates that inject logo via {{{logoContent}}} syntax
  */
 export function getLogoPlaceholder(data: ModuleData, context?: RenderContext): string {
-  const logoData = data as LogoData;
+  const logoData = data as unknown as LogoData;
   const { enabled, logoUrl } = logoData;
 
   if (!enabled || !logoUrl || logoUrl.trim() === '' || logoUrl === 'none') {

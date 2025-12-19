@@ -8,7 +8,7 @@ import { TwitterPostData } from './schema';
  * @param context Render context
  */
 export function getTwitterPostCss(data: ModuleData, context?: RenderContext): string {
-  const moduleData = data as TwitterPostData;
+  const moduleData = data as unknown as TwitterPostData;
 
   // If disabled, hide the module
   if (!moduleData.enabled) {

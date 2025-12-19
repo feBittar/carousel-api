@@ -26,7 +26,7 @@ function resolveUrl(url: string, baseUrl?: string): string {
  * Generates HTML for the Arrow Bottom Text Module
  */
 export function getArrowBottomTextHtml(data: ModuleData, context?: RenderContext): string {
-  const arrowData = data as ArrowBottomTextData;
+  const arrowData = data as unknown as ArrowBottomTextData;
 
   console.log('[ArrowBottomText HTML] Data:', { enabled: arrowData.enabled, arrowImageUrl: arrowData.arrowImageUrl });
 
@@ -61,7 +61,7 @@ export function getArrowBottomTextHtml(data: ModuleData, context?: RenderContext
  * Used by templates that inject arrow-bottom-text via {{arrowBottomTextContent}} syntax
  */
 export function getArrowBottomTextPlaceholders(data: ModuleData, context?: RenderContext): Record<string, string> {
-  const arrowData = data as ArrowBottomTextData;
+  const arrowData = data as unknown as ArrowBottomTextData;
 
   if (!arrowData.enabled || !arrowData.arrowImageUrl) {
     return {

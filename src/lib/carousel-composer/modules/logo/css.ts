@@ -102,7 +102,7 @@ function getLogoFilterCSS(data: LogoData): string {
  * Generates CSS for the Logo Module
  */
 export function getLogoCss(data: ModuleData, context?: RenderContext): string {
-  const logoData = data as LogoData;
+  const logoData = data as unknown as LogoData;
   const { enabled, width, height, opacity } = logoData;
 
   if (!enabled) {
@@ -141,7 +141,7 @@ export function getLogoCss(data: ModuleData, context?: RenderContext): string {
  * Generates CSS variables for the Logo Module (for compatibility with legacy templates)
  */
 export function getLogoStyleVariables(data: ModuleData): Record<string, string> {
-  const logoData = data as LogoData;
+  const logoData = data as unknown as LogoData;
   const variables: Record<string, string> = {};
 
   if (!logoData.enabled) {

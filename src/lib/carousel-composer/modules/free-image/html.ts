@@ -30,7 +30,7 @@ function resolveUrl(url: string, baseUrl?: string): string {
  * the startSlideIndex and endSlideIndex range.
  */
 export function getFreeImageHtml(data: ModuleData, context?: RenderContext): string {
-  const freeImage = data as FreeImageData;
+  const freeImage = data as unknown as FreeImageData;
 
   // Don't render if disabled or no URL
   if (!freeImage.enabled || !freeImage.url) {

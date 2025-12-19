@@ -14,7 +14,7 @@ import type {
 import { CONTENT_MODULES } from './types';
 import { getModule } from './modules/registry';
 import { wrapInCarousel, generateCarouselCSS, validateFreeImageConfig } from './carousel-helpers';
-import { CUSTOM_FONTS } from '@/lib/constants/fonts';
+import { CUSTOM_FONTS } from '../constants/fonts';
 
 // ============================================================================
 // CONFIGURATION

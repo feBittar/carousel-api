@@ -6,7 +6,7 @@ import { TextureOverlayData } from './schema';
  * Creates a separate div element for proper z-index layering
  */
 export function getTextureOverlayCss(data: ModuleData, context?: RenderContext): string {
-  const overlay = data as TextureOverlayData;
+  const overlay = data as unknown as TextureOverlayData;
 
   // Return empty if not enabled or no texture URL
   if (!overlay.enabled || !overlay.textureUrl) {

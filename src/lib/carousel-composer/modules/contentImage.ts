@@ -5,7 +5,7 @@
  * This module allows users to add and position images within the carousel card.
  */
 
-import type { ContentImageModule, ModuleDefinition, ModuleData, CompositionOptions } from '@/lib/carousel-composer/types';
+import type { ContentImageModule, ModuleDefinition, ModuleData, CompositionOptions } from '../types';
 
 /**
  * Content Image Module Definition

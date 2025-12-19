@@ -11,7 +11,7 @@ import { FreeImageData } from './schema';
  * - Slide-specific positioning to create illusion of continuous image
  */
 export function getFreeImageCss(data: ModuleData): string {
-  const freeImage = data as FreeImageData;
+  const freeImage = data as unknown as FreeImageData;
 
   // Don't render CSS if disabled or no URL
   if (!freeImage.enabled || !freeImage.url) {

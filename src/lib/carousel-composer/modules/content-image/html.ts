@@ -26,7 +26,7 @@ function resolveUrl(url: string, baseUrl?: string): string {
  * Generates HTML for the Content Image module
  */
 export function getContentImageHtml(data: ModuleData, context?: RenderContext): string {
-  const contentImage = data as ContentImageData;
+  const contentImage = data as unknown as ContentImageData;
 
   if (!contentImage.enabled) {
     return '';

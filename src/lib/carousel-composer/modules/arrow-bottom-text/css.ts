@@ -193,7 +193,7 @@ function convertColorToFilter(color: string): string {
  * Generates CSS for the Arrow Bottom Text Module
  */
 export function getArrowBottomTextCss(data: ModuleData, context?: RenderContext): string {
-  const arrowData = data as ArrowBottomTextData;
+  const arrowData = data as unknown as ArrowBottomTextData;
 
   console.log('[ArrowBottomText CSS] Data:', { enabled: arrowData.enabled, arrowImageUrl: arrowData.arrowImageUrl });
 
@@ -266,7 +266,7 @@ export function getArrowBottomTextCss(data: ModuleData, context?: RenderContext)
  * Generates CSS variables for the Arrow Bottom Text Module
  */
 export function getArrowBottomTextStyleVariables(data: ModuleData): Record<string, string> {
-  const arrowData = data as ArrowBottomTextData;
+  const arrowData = data as unknown as ArrowBottomTextData;
   const variables: Record<string, string> = {};
 
   if (!arrowData.enabled) {

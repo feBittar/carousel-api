@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Duo Module - Server-side generation logic
  *

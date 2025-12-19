@@ -76,7 +76,7 @@ const ICONS = {
  * @param context Render context
  */
 export function getTwitterPostHtml(data: ModuleData, context?: RenderContext): string {
-  const moduleData = data as TwitterPostData;
+  const moduleData = data as unknown as TwitterPostData;
 
   // If disabled, return empty
   if (!moduleData.enabled) {

@@ -74,7 +74,7 @@ function isDuoModeActive(context?: RenderContext): boolean {
  * Generates HTML for the Corners Module
  */
 export function getCornersHtml(data: ModuleData, context?: RenderContext): string {
-  const cornersData = data as CornersData;
+  const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
   const baseUrl = context?.baseUrl || '';
   const isDuo = isDuoModeActive(context);
@@ -117,7 +117,7 @@ export function getCornersHtml(data: ModuleData, context?: RenderContext): strin
  * Used by legacy templates that inject corners via {{{corner1Content}}} syntax
  */
 export function getCornerPlaceholders(data: ModuleData, baseUrl: string = ''): Record<string, string> {
-  const cornersData = data as CornersData;
+  const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
 
   return {

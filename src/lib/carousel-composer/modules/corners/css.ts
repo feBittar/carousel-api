@@ -393,7 +393,7 @@ function generateDuoCornerCSS(corners: Corner[], baseUrl?: string): string {
  * Generates CSS for the Corners Module
  */
 export function getCornersCss(data: ModuleData, context?: RenderContext): string {
-  const cornersData = data as CornersData;
+  const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
   const isDuo = isDuoModeActive(context);
   const baseUrl = context?.baseUrl || '';
@@ -506,7 +506,7 @@ export function getCornersCss(data: ModuleData, context?: RenderContext): string
  * Generates CSS variables for the Corners Module (for compatibility with legacy templates)
  */
 export function getCornersStyleVariables(data: ModuleData): Record<string, string> {
-  const cornersData = data as CornersData;
+  const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
   const variables: Record<string, string> = {};
 

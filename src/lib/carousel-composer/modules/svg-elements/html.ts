@@ -45,7 +45,7 @@ function getSvgElementHtml(svgUrl: string, svgNum: number, enabled: boolean, bas
  * Generates HTML for the SVGElements Module
  */
 export function getSvgElementsHtml(data: ModuleData, context?: RenderContext): string {
-  const svgData = data as SvgElementsData;
+  const svgData = data as unknown as SvgElementsData;
   const { svgElements } = svgData;
 
   // Generate HTML for each enabled SVG element
@@ -73,7 +73,7 @@ export function getSvgElementsHtml(data: ModuleData, context?: RenderContext): s
  * Used by legacy templates that inject SVGs via {{svg1Content}} syntax
  */
 export function getSvgElementsPlaceholders(data: ModuleData, context?: RenderContext): Record<string, string> {
-  const svgData = data as SvgElementsData;
+  const svgData = data as unknown as SvgElementsData;
   const { svgElements } = svgData;
   const placeholders: Record<string, string> = {};
 

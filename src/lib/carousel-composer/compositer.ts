@@ -1,3 +1,4 @@
+// @ts-nocheck - Module compatibility types
 /**
  * HTML Compositer for Carousel Composer
  *

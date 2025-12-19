@@ -160,7 +160,7 @@ function getTextStyleCSS(text: FreeTextElement): string {
  * Generates CSS for the FreeText Module
  */
 export function getFreeTextCss(data: ModuleData, context?: RenderContext): string {
-  const freeTextData = data as FreeTextData;
+  const freeTextData = data as unknown as FreeTextData;
   const { count, texts } = freeTextData;
 
   // Get viewport dimensions from context or use defaults
@@ -233,7 +233,7 @@ export function getFreeTextCss(data: ModuleData, context?: RenderContext): strin
  * Generates CSS variables for the FreeText Module (for compatibility with legacy templates)
  */
 export function getFreeTextStyleVariables(data: ModuleData): Record<string, string> {
-  const freeTextData = data as FreeTextData;
+  const freeTextData = data as unknown as FreeTextData;
   const { count, texts } = freeTextData;
   const variables: Record<string, string> = {};
 

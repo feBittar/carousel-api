@@ -1,6 +1,6 @@
 import { ModuleData, RenderContext } from '../types';
 import { BulletsData } from './schema';
-import { applyStyledChunks } from '@/lib/utils/richTextConverter';
+import { applyStyledChunks } from '../../utils/richTextConverter';
 
 /**
  * Helper to convert relative URLs to absolute URLs
@@ -27,7 +27,7 @@ function resolveUrl(url: string, baseUrl?: string): string {
  * Generates HTML for the Bullets module
  */
 export function getBulletsHtml(data: ModuleData, context?: RenderContext): string {
-  const bullets = data as BulletsData;
+  const bullets = data as unknown as BulletsData;
 
   // Generate HTML for each bullet item
   const bulletItems = bullets.items

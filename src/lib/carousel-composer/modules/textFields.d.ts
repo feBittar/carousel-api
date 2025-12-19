@@ -10,7 +10,7 @@
  * - position: absolute ONLY if field.freePosition === true
  * - By default, fields use flex layout inside the card
  */
-import type { ModuleDefinition } from '@/lib/carousel-composer/types';
+import type { ModuleDefinition } from '../types';
 /**
  * Text Fields Module Definition
  */

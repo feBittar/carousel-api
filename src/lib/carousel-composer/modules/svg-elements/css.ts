@@ -167,7 +167,7 @@ function convertColorToFilter(color: string): string {
  * Generates CSS for the SVGElements Module
  */
 export function getSvgElementsCss(data: ModuleData, context?: RenderContext): string {
-  const svgData = data as SvgElementsData;
+  const svgData = data as unknown as SvgElementsData;
   const { svgElements } = svgData;
 
   // Get viewport dimensions from context or use defaults
@@ -242,7 +242,7 @@ export function getSvgElementsCss(data: ModuleData, context?: RenderContext): st
  * Generates CSS variables for the SVGElements Module (for compatibility with legacy templates)
  */
 export function getSvgElementsStyleVariables(data: ModuleData): Record<string, string> {
-  const svgData = data as SvgElementsData;
+  const svgData = data as unknown as SvgElementsData;
   const { svgElements } = svgData;
   const variables: Record<string, string> = {};
 

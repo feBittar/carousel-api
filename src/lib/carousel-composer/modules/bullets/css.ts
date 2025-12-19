@@ -5,7 +5,7 @@ import { BulletsData } from './schema';
  * Generates CSS for the Bullets module
  */
 export function getBulletsCss(data: ModuleData): string {
-  const bullets = data as BulletsData;
+  const bullets = data as unknown as BulletsData;
 
   // Layout configuration
   const layoutConfig = {
@@ -149,7 +149,7 @@ export function getBulletsCss(data: ModuleData): string {
  * Generates CSS variables for the Bullets module
  */
 export function getBulletsStyleVariables(data: ModuleData): Record<string, string> {
-  const bullets = data as BulletsData;
+  const bullets = data as unknown as BulletsData;
 
   return {
     '--bullets-gap': `${bullets.gap}px`,

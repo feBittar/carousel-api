@@ -53,7 +53,7 @@ function getPositionCSS(field: TextField, viewportWidth: number, viewportHeight:
  * Generates CSS for the TextFields module
  */
 export function getTextFieldsCss(data: ModuleData, options?: CompositionOptions): string {
-  const textFields = data as TextFieldsData;
+  const textFields = data as unknown as TextFieldsData;
 
   // Get viewport dimensions from options or use defaults
   const viewportWidth = options?.viewportWidth || 1080;

@@ -58,6 +58,21 @@ export class HtmlGeneratorService {
       }
     );
 
+    // ========== DEBUG LOGS ==========
+    console.log(`[HTML Generator] 📋 Slide ${slide.id}:`);
+    console.log(`[HTML Generator]    Enabled modules: ${enabledModuleIds.join(', ')}`);
+    console.log(`[HTML Generator]    HTML length: ${composed.finalHtml.length} chars`);
+
+    // Log text content if exists
+    const textFieldsData = modulesData.textFields as any;
+    if (textFieldsData?.fields?.[0]?.content) {
+      console.log(`[HTML Generator]    Text: "${textFieldsData.fields[0].content}"`);
+      console.log(`[HTML Generator]    Font: ${textFieldsData.fields[0].style?.fontFamily || 'N/A'}`);
+    } else {
+      console.log(`[HTML Generator]    ⚠️  No text content`);
+    }
+    // ================================
+
     return composed.finalHtml;
   }
 

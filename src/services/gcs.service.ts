@@ -57,12 +57,9 @@ export class GcsService {
           contentType: 'image/png',
           cacheControl: 'public, max-age=31536000', // Cache for 1 year
         },
-        // Don't use 'public: true' - it uses legacy ACLs
-        // Use makePublic() instead for uniform bucket-level access
+        // Don't set public access here - bucket already has uniform bucket-level access
+        // configured to make all objects public by default
       });
-
-      // Make file publicly accessible (works with uniform bucket-level access)
-      await file.makePublic();
 
       // Get public URL
       const publicUrl = `https://storage.googleapis.com/${this.bucketName}/${filePath}`;

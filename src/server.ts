@@ -32,13 +32,23 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (Puppeteer, mobile apps, curl)
+    if (!origin) {
+      console.log('[CORS] ✅ Allowing request with no origin (Puppeteer/curl)');
+      return callback(null, true);
+    }
+
+    // Allow null origin (Puppeteer headless mode)
+    if (origin === 'null') {
+      console.log('[CORS] ✅ Allowing null origin (Puppeteer headless)');
+      return callback(null, true);
+    }
 
     if (allowedOrigins.includes(origin)) {
+      console.log(`[CORS] ✅ Allowing whitelisted origin: ${origin}`);
       callback(null, true);
     } else {
-      console.warn(`[CORS] Blocked origin: ${origin}`);
+      console.warn(`[CORS] ❌ Blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

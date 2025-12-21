@@ -340,50 +340,65 @@ function collectCSS(
 ): string {
   const cssParts: string[] = [];
 
+  console.log('\n========================================');
+  console.log('[Compositer] CSS COLLECTION STARTED');
+  console.log('========================================');
+  console.log('[Compositer] Enabled modules:', enabledModules);
+  console.log('[Compositer] Carousel mode:', options.carouselMode);
+  console.log('[Compositer] Slide count:', options.slideCount);
+
   // Add carousel CSS if in horizontal mode
   if (options.carouselMode === 'horizontal' && options.slideCount && options.slideCount > 1) {
     const carouselCSS = generateCarouselCSS(options.slideCount, options.freeImage);
+    console.log('[Compositer] [STEP 1] Adding CAROUSEL CSS');
+    console.log('[Compositer]   CSS Length:', carouselCSS.length, 'bytes');
     cssParts.push(`/* === Horizontal Carousel Layout === */\n${carouselCSS}`);
 
     // IMPORTANT: Copy background from viewport to each carousel-slide
     // FIX: Check for field existence, not backgroundType value
     const viewportData = moduleData['viewport'] as any;
 
-    console.log('[Compositer] Applying viewport background to carousel-slide:');
+    console.log('[Compositer] [STEP 2] Applying viewport background to carousel-slide:');
     console.log('[Compositer]   backgroundImage:', viewportData?.backgroundImage);
     console.log('[Compositer]   backgroundColor:', viewportData?.backgroundColor);
     console.log('[Compositer]   gradientEnabled:', viewportData?.gradientOverlay?.enabled);
 
     // Copy background IMAGE if exists (priority over color)
     if (viewportData?.backgroundImage && viewportData.backgroundImage.trim() !== '') {
-      console.log('[Compositer] ✓ Adding background-image to .carousel-slide');
-      cssParts.push(`
+      console.log('[Compositer]   ✓ Adding background-image to .carousel-slide');
+      const imageCSS = `
 .carousel-slide {
   background-image: url(${viewportData.backgroundImage}) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
-      `.trim());
+      `.trim();
+      console.log('[Compositer]   CSS Length:', imageCSS.length, 'bytes');
+      cssParts.push(imageCSS);
 
       // Add color as fallback while image loads
       if (viewportData?.backgroundColor) {
-        console.log('[Compositer] ✓ Adding background-color fallback to .carousel-slide');
-        cssParts.push(`
+        console.log('[Compositer]   ✓ Adding background-color fallback to .carousel-slide');
+        const colorFallbackCSS = `
 .carousel-slide {
   background-color: ${viewportData.backgroundColor} !important;
 }
-        `.trim());
+        `.trim();
+        console.log('[Compositer]   CSS Length:', colorFallbackCSS.length, 'bytes');
+        cssParts.push(colorFallbackCSS);
       }
     }
     // Copy background COLOR if exists (and no image)
     else if (viewportData?.backgroundColor) {
-      console.log('[Compositer] ✓ Adding background-color to .carousel-slide');
-      cssParts.push(`
+      console.log('[Compositer]   ✓ Adding background-color to .carousel-slide');
+      const colorCSS = `
 .carousel-slide {
   background-color: ${viewportData.backgroundColor} !important;
 }
-      `.trim());
+      `.trim();
+      console.log('[Compositer]   CSS Length:', colorCSS.length, 'bytes');
+      cssParts.push(colorCSS);
     }
 
     // NOTE: Gradient overlay is already handled by viewport/css.ts line 83
@@ -391,6 +406,8 @@ function collectCSS(
   }
 
   // Process modules in defined order
+  console.log('\n[Compositer] [STEP 3] Processing modules in MODULE_ORDER...');
+  let moduleCounter = 0;
   for (const moduleId of MODULE_ORDER) {
     // Skip if module is not enabled
     if (!enabledModules.includes(moduleId)) {
@@ -399,12 +416,14 @@ function collectCSS(
 
     // Skip freeImage module CSS in horizontal mode (already included in carousel CSS)
     if (moduleId === 'freeImage' && options.carouselMode === 'horizontal') {
+      console.log(`[Compositer]   [Module ${++moduleCounter}] ${moduleId} - SKIPPED (horizontal mode)`);
       continue;
     }
 
     // Get module definition from registry
     const module = getModule(moduleId);
     if (!module) {
+      console.log(`[Compositer]   [Module ${++moduleCounter}] ${moduleId} - SKIPPED (not in registry)`);
       continue;
     }
 
@@ -415,7 +434,24 @@ function collectCSS(
     try {
       const css = module.generateCSS(data, options);
       if (css) {
+        moduleCounter++;
+        console.log(`[Compositer]   [Module ${moduleCounter}] ${moduleId} (${module.name})`);
+        console.log(`[Compositer]     CSS Length: ${css.length} bytes`);
+
+        // Check for background-related properties
+        const hasBackground = /background[-:]/.test(css);
+        const hasBodySelector = /\bbody\s*\{/.test(css);
+        const hasCarouselSlideSelector = /\.carousel-slide\s*\{/.test(css);
+        const hasImportant = /!important/.test(css);
+
+        console.log(`[Compositer]     Contains 'background': ${hasBackground}`);
+        console.log(`[Compositer]     Contains 'body' selector: ${hasBodySelector}`);
+        console.log(`[Compositer]     Contains '.carousel-slide' selector: ${hasCarouselSlideSelector}`);
+        console.log(`[Compositer]     Contains '!important': ${hasImportant}`);
+
         cssParts.push(`/* === ${module.name} === */\n${css}`);
+      } else {
+        console.log(`[Compositer]   [Module ${++moduleCounter}] ${moduleId} - NO CSS generated`);
       }
     } catch (error) {
       console.error(`[Compositer] Error generating CSS for module '${moduleId}':`, error);
@@ -426,7 +462,21 @@ function collectCSS(
   // to allow for configurable padding and layout settings
   // See: viewport/css.ts:86-124
 
-  return cssParts.filter(Boolean).join('\n\n');
+  const finalCSS = cssParts.filter(Boolean).join('\n\n');
+
+  console.log('\n========================================');
+  console.log('[Compositer] CSS COLLECTION SUMMARY');
+  console.log('========================================');
+  console.log('[Compositer] Total CSS parts:', cssParts.length);
+  console.log('[Compositer] Total CSS length:', finalCSS.length, 'bytes');
+  console.log('[Compositer] CSS order (top to bottom):');
+  cssParts.forEach((part, index) => {
+    const firstLine = part.split('\n')[0];
+    console.log(`[Compositer]   ${index + 1}. ${firstLine}`);
+  });
+  console.log('========================================\n');
+
+  return finalCSS;
 }
 
 // ============================================================================
@@ -698,43 +748,51 @@ function generateFinalHTML(params: {
 }): string {
   const { viewportWidth, viewportHeight, modulesCSS, modulesHTML, baseUrl, styleVariables, carouselMode, freeImage } = params;
 
+  console.log('\n========================================');
+  console.log('[Compositer] FINAL HTML GENERATION');
+  console.log('========================================');
+
   // Convert styleVariables to CSS
   const cssVariablesString = Object.entries(styleVariables)
     .map(([key, value]) => `  ${key}: ${value};`)
     .join('\n');
+
+  console.log('[Compositer] CSS Variables count:', Object.keys(styleVariables).length);
 
   // Build Google Fonts URL
   const fontsUrl = `https://fonts.googleapis.com/css2?${GOOGLE_FONTS.map((f) => `family=${f}`).join('&')}&display=swap`;
 
   // Generate custom fonts CSS
   const customFontsCSS = generateCustomFontsCSS(baseUrl);
+  console.log('[Compositer] Custom fonts CSS length:', customFontsCSS.length, 'bytes');
 
   // Build mode-specific title
   const modeInfo = carouselMode === 'horizontal'
     ? ` (Horizontal Carousel - ${viewportWidth}×${viewportHeight})`
     : ` (Vertical - ${viewportWidth}×${viewportHeight})`;
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carousel Slide${modeInfo}</title>
-  ${carouselMode === 'horizontal' ? '<!-- Generated in HORIZONTAL CAROUSEL MODE -->' : ''}
+  console.log('[Compositer] Viewport dimensions:', viewportWidth, 'x', viewportHeight);
+  console.log('[Compositer] Carousel mode:', carouselMode);
+  console.log('[Compositer] Modules CSS length:', modulesCSS.length, 'bytes');
 
-  <!-- Custom Fonts (@font-face) -->
-  <style>
-    ${customFontsCSS}
-  </style>
+  // Check for CSS specificity issues
+  const resetHasBodyBackground = /body\s*\{[^}]*background/.test(modulesCSS);
+  const resetHasUniversalBackground = /\*\s*\{[^}]*background/.test(modulesCSS);
+  const viewportCSSPosition = modulesCSS.indexOf('/* === Viewport');
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="${fontsUrl}" rel="stylesheet">
+  console.log('\n[Compositer] CSS CONFLICT ANALYSIS:');
+  console.log('[Compositer]   CSS Reset has body background:', resetHasBodyBackground);
+  console.log('[Compositer]   CSS Reset has universal background:', resetHasUniversalBackground);
+  console.log('[Compositer]   Viewport CSS position in combined CSS:', viewportCSSPosition, '(char index)');
 
-  <!-- Base CSS Reset + CSS Variables -->
-  <style>
-    /* CSS Reset */
+  if (viewportCSSPosition > 5000) {
+    console.warn('[Compositer]   ⚠️  WARNING: Viewport CSS appears late in the cascade!');
+    console.warn('[Compositer]       This may cause background override issues.');
+  }
+
+  console.log('========================================\n');
+
+  const resetCSS = `/* CSS Reset */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -782,7 +840,37 @@ ${cssVariablesString}
 
     p, h1, h2, h3, h4, h5, h6 {
       overflow-wrap: break-word;
-    }
+    }`;
+
+  console.log('\n[Compositer] HTML STRUCTURE ORDER:');
+  console.log('[Compositer]   1. Custom Fonts CSS (', customFontsCSS.length, 'bytes )');
+  console.log('[Compositer]   2. Google Fonts link tag');
+  console.log('[Compositer]   3. CSS Reset (', resetCSS.length, 'bytes )');
+  console.log('[Compositer]   4. Module CSS (', modulesCSS.length, 'bytes )');
+  console.log('[Compositer]   NOTE: Reset CSS and Module CSS are in the SAME <style> block!');
+  console.log('[Compositer]   ⚠️  This means Module CSS comes AFTER Reset CSS in cascade');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carousel Slide${modeInfo}</title>
+  ${carouselMode === 'horizontal' ? '<!-- Generated in HORIZONTAL CAROUSEL MODE -->' : ''}
+
+  <!-- Custom Fonts (@font-face) -->
+  <style>
+    ${customFontsCSS}
+  </style>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="${fontsUrl}" rel="stylesheet">
+
+  <!-- Base CSS Reset + CSS Variables + Module CSS -->
+  <style>
+    ${resetCSS}
 
     /* Module CSS */
     ${modulesCSS}

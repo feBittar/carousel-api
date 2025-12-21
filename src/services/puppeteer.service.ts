@@ -83,7 +83,7 @@ export class PuppeteerService {
 
       // DEBUG: Save HTML to disk for testing outside Puppeteer
       const timestamp = Date.now();
-      const debugPath = path.join('D:', 'tmp', 'fix-api', 'carousel-api', `debug-slide-${timestamp}.html`);
+      const debugPath = `/tmp/debug-slide-${timestamp}.html`;
 
       try {
         fs.writeFileSync(debugPath, html, 'utf-8');

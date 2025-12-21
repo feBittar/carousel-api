@@ -6,7 +6,15 @@ import { ViewportData } from './schema';
  * Controla o background do body, blur overlay (::before), e gradient overlay (::after)
  */
 export function getViewportCss(data: ModuleData, options?: CompositionOptions): string {
-  const viewport = data as unknown as ViewportData;
+  const viewport = data as ViewportData;
+
+  // DEBUG: Log viewport data
+  console.log('[Viewport CSS] Generating CSS for viewport:');
+  console.log('[Viewport CSS]   backgroundType:', viewport.backgroundType);
+  console.log('[Viewport CSS]   backgroundColor:', viewport.backgroundColor);
+  console.log('[Viewport CSS]   backgroundImage:', viewport.backgroundImage);
+  console.log('[Viewport CSS]   gradientEnabled:', viewport.gradientOverlay?.enabled);
+  console.log('[Viewport CSS]   gradientColor:', viewport.gradientOverlay?.color);
 
   // CSS para o body (background principal)
   const bodyStyles: string[] = [];
@@ -64,8 +72,13 @@ body::before {
       rgba(${hexToRgb(gradient.color)}, ${endOpacity}) 100%
     `.trim();
 
+    // FIX: Em modo horizontal (free-image), aplicar gradiente em cada slide
+    // Em modo vertical, aplicar no body
+    const isHorizontalMode = options?.carouselMode === 'horizontal';
+    const selector = isHorizontalMode ? '.carousel-slide::after' : 'body::after';
+
     afterCss = `
-body::after {
+${selector} {
   content: '';
   position: absolute;
   top: 0;
@@ -77,11 +90,12 @@ body::after {
   background-image: linear-gradient(${direction}, ${gradientStops});
   mix-blend-mode: ${blendMode};
   pointer-events: none;
-  z-index: 9999;
+  z-index: 0;
 }`;
   }
 
   // CSS para content-wrapper (usado quando card está inativo)
+  // Deve ter a MESMA estrutura do card-container, mas sem estilos visuais
   const cw = viewport.contentWrapper || {
     padding: { top: 0, right: 0, bottom: 0, left: 0 },
     gap: 12,
@@ -93,16 +107,44 @@ body::after {
   const padding = cw.padding || { top: 0, right: 0, bottom: 0, left: 0 };
 
   const contentWrapperCss = `
+/* ===== CONTENT WRAPPER (funciona como card invisível) ===== */
 .content-wrapper {
+  /* Estrutura igual ao card-container */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
   flex-direction: ${cw.layoutDirection || 'column'};
   gap: ${cw.gap ?? 12}px;
   padding: ${padding.top ?? 0}px ${padding.right ?? 0}px ${padding.bottom ?? 0}px ${padding.left ?? 0}px;
   align-items: ${cw.layoutDirection === 'row' ? (cw.contentAlign || 'stretch') : 'stretch'};
   justify-content: ${cw.justifyContent || 'flex-start'};
+  box-sizing: border-box;
+  z-index: 1;
+
+  /* Sem estilos visuais (invisível) */
+  background: none;
+  border: none;
+  box-shadow: none;
+  pointer-events: none; /* Permite clicks atravessarem */
+}
+
+/* Filhos do content-wrapper devem receber eventos novamente */
+.content-wrapper > * {
+  pointer-events: auto;
 }`;
 
   // Combinar todos os CSS
-  return [bodyCss, beforeCss, afterCss, contentWrapperCss].filter(Boolean).join('\n\n');
+  const finalCss = [bodyCss, beforeCss, afterCss, contentWrapperCss].filter(Boolean).join('\n\n');
+
+  // DEBUG: Log generated CSS
+  console.log('[Viewport CSS] Generated CSS length:', finalCss.length);
+  console.log('[Viewport CSS] Has body CSS:', bodyCss.length > 0);
+  console.log('[Viewport CSS] Has gradient CSS:', afterCss.length > 0);
+
+  return finalCss;
 }
 
 /**
@@ -110,7 +152,7 @@ body::after {
  * Outros módulos podem usar essas variáveis
  */
 export function getViewportStyleVariables(data: ModuleData): Record<string, string> {
-  const viewport = data as unknown as ViewportData;
+  const viewport = data as ViewportData;
 
   return {
     '--viewport-bg-color': viewport.backgroundColor,

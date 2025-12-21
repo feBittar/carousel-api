@@ -49,13 +49,18 @@ export class HtmlGeneratorService {
     const modulesData = slide.modules;
 
     // Compose template using carousel-composer library
+    const options = {
+      baseUrl: this.baseUrl,
+      slideCount: 1, // Each slide is rendered individually (vertical mode)
+    };
+
+    console.log('[Service] Calling composeTemplate with slideCount:', options.slideCount);
+    console.log('[Service] Mode: vertical (each slide rendered individually)');
+
     const composed: ComposedTemplate = composeTemplate(
       enabledModuleIds,
       modulesData,
-      {
-        baseUrl: this.baseUrl,
-        slideCount: 1, // Each slide is rendered individually
-      }
+      options
     );
 
     // ========== DEBUG LOGS ==========

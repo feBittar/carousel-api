@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import path from 'path';
 import routes from './routes';
 import { puppeteerService } from './services/puppeteer.service';
 
@@ -61,10 +60,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static file serving for carousel assets
-const publicPath = path.join(__dirname, '../public');
-console.log(`[Static Files] Serving from: ${publicPath}`);
-app.use('/fonts', express.static(path.join(publicPath, 'fonts')));
-app.use('/svgs', express.static(path.join(publicPath, 'svgs')));
+app.use('/fonts', express.static('public/fonts'));
+app.use('/svgs', express.static('public/svgs'));
 
 // Request logging
 app.use(morgan('combined'));

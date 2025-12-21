@@ -84,6 +84,9 @@ RUN npm ci --omit=dev
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
 
+# Copy public assets (fonts, svgs, etc.)
+COPY public ./public
+
 # Note: Running as root for GCP key file access
 # In production, consider copying the key into the image or using proper volume permissions
 

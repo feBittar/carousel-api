@@ -267,6 +267,24 @@ export function composeTemplate(
     freeImage: freeImageConfig,
   });
 
+  // === LOGGING: Capture final HTML before sending to Puppeteer ===
+  console.log('[FINAL HTML] ==================== START ====================');
+  console.log('[FINAL HTML] Length:', finalHtml.length, 'chars');
+  console.log('[FINAL HTML] Viewport dimensions:', viewportWidth, 'x', viewportHeight);
+  console.log('[FINAL HTML] Carousel mode:', carouselMode);
+  console.log('[FINAL HTML] Full HTML content:');
+  console.log(finalHtml);
+  console.log('[FINAL HTML] ==================== END ====================');
+
+  // Check if <style> tag contains viewport CSS
+  const hasBodyStyles = finalHtml.includes('body {');
+  const hasBackgroundColor = finalHtml.includes('background-color:');
+  const hasBackgroundImage = finalHtml.includes('background-image:');
+  console.log('[FINAL HTML] CSS Check:');
+  console.log('[FINAL HTML]   - Has body styles:', hasBodyStyles);
+  console.log('[FINAL HTML]   - Has background-color:', hasBackgroundColor);
+  console.log('[FINAL HTML]   - Has background-image:', hasBackgroundImage);
+
   return {
     finalHtml,
     modulesCSS,

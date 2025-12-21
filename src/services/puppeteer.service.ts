@@ -1,4 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Resultado da renderização de uma imagem
@@ -79,20 +81,37 @@ export class PuppeteerService {
         deviceScaleFactor: 2, // 2x for retina quality
       });
 
-      // Load HTML content
-      await page.setContent(html, {
-        waitUntil: ['load', 'networkidle0'],
-        timeout: 30000,
-      });
+      // DEBUG: Save HTML to disk for testing outside Puppeteer
+      const timestamp = Date.now();
+      const debugPath = path.join('D:', 'tmp', 'fix-api', 'carousel-api', `debug-slide-${timestamp}.html`);
 
-      // Wait for fonts to load (important!)
+      try {
+        fs.writeFileSync(debugPath, html, 'utf-8');
+        console.log('[Puppeteer] 💾 HTML saved for debugging:', debugPath);
+      } catch (err) {
+        console.warn('[Puppeteer] ⚠️ Failed to save debug HTML:', err);
+      }
+
+      // Load HTML content and wait for all network requests
+      console.log('[Puppeteer] Loading HTML content...');
+      await page.setContent(html, {
+        waitUntil: 'networkidle0', // Wait until no network connections for 500ms
+        timeout: 30000, // 30 seconds timeout
+      });
+      console.log('[Puppeteer] HTML loaded, network idle');
+
+      // Wait for fonts to load (critical for text rendering!)
+      console.log('[Puppeteer] Waiting for fonts to load...');
       await page.evaluate(() => {
         // @ts-ignore - document.fonts exists in browser context
         return document.fonts.ready;
       });
+      console.log('[Puppeteer] Fonts loaded successfully');
 
-      // Small delay to ensure everything is rendered
-      await page.waitForTimeout(500);
+      // Additional delay to ensure CSS animations and final rendering complete
+      console.log('[Puppeteer] Waiting for final rendering (1s delay)...');
+      await page.waitForTimeout(1000);
+      console.log('[Puppeteer] Content fully loaded and ready for screenshot');
 
       // Take screenshot
       const imageBuffer = await page.screenshot({

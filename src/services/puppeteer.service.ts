@@ -113,6 +113,20 @@ export class PuppeteerService {
       await page.waitForTimeout(1000);
       console.log('[Puppeteer] Content fully loaded and ready for screenshot');
 
+      // DEBUG: Check if CSS is actually being applied by checking computed styles
+      const computedStyles = await page.evaluate(() => {
+        const body = document.querySelector('body');
+        if (!body) return null;
+        const styles = window.getComputedStyle(body);
+        return {
+          backgroundColor: styles.backgroundColor,
+          backgroundImage: styles.backgroundImage,
+          width: styles.width,
+          height: styles.height,
+        };
+      });
+      console.log('[Puppeteer] 🔍 Body computed styles:', computedStyles);
+
       // Take screenshot - Try body element first as fallback
       let imageBuffer: Buffer;
 

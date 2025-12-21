@@ -328,20 +328,48 @@ function collectCSS(
     cssParts.push(`/* === Horizontal Carousel Layout === */\n${carouselCSS}`);
 
     // IMPORTANT: Copy background from viewport to each carousel-slide
+    // FIX: Check for field existence, not backgroundType value
     const viewportData = moduleData['viewport'] as any;
-    if (viewportData?.backgroundType === 'image' && viewportData?.backgroundImage) {
+
+    console.log('[Compositer] Applying viewport background to carousel-slide:');
+    console.log('[Compositer]   backgroundImage:', viewportData?.backgroundImage);
+    console.log('[Compositer]   backgroundColor:', viewportData?.backgroundColor);
+    console.log('[Compositer]   gradientEnabled:', viewportData?.gradientOverlay?.enabled);
+
+    // Copy background IMAGE if exists (priority over color)
+    if (viewportData?.backgroundImage && viewportData.backgroundImage.trim() !== '') {
+      console.log('[Compositer] ✓ Adding background-image to .carousel-slide');
       cssParts.push(`
 .carousel-slide {
   background-image: url(${viewportData.backgroundImage}) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
       `.trim());
-    } else if (viewportData?.backgroundType === 'color' && viewportData?.backgroundColor) {
+
+      // Add color as fallback while image loads
+      if (viewportData?.backgroundColor) {
+        console.log('[Compositer] ✓ Adding background-color fallback to .carousel-slide');
+        cssParts.push(`
+.carousel-slide {
+  background-color: ${viewportData.backgroundColor} !important;
+}
+        `.trim());
+      }
+    }
+    // Copy background COLOR if exists (and no image)
+    else if (viewportData?.backgroundColor) {
+      console.log('[Compositer] ✓ Adding background-color to .carousel-slide');
       cssParts.push(`
 .carousel-slide {
   background-color: ${viewportData.backgroundColor} !important;
 }
       `.trim());
     }
+
+    // NOTE: Gradient overlay is already handled by viewport/css.ts line 83
+    // It generates .carousel-slide::after with gradient in horizontal mode
   }
 
   // Process modules in defined order

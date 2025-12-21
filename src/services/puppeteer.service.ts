@@ -113,19 +113,42 @@ export class PuppeteerService {
       await page.waitForTimeout(1000);
       console.log('[Puppeteer] Content fully loaded and ready for screenshot');
 
-      // Take screenshot
-      const imageBuffer = await page.screenshot({
-        type: 'png',
-        clip: {
-          x: 0,
-          y: 0,
-          width,
-          height,
-        },
-        omitBackground: false,
-      });
+      // Take screenshot - Try body element first as fallback
+      let imageBuffer: Buffer;
 
-      console.log('[Puppeteer] ✅ Image rendered successfully');
+      try {
+        console.log('[Puppeteer] Attempting body element screenshot (fallback method)...');
+        const bodyElement = await page.$('body');
+
+        if (bodyElement) {
+          const bodyScreenshot = await bodyElement.screenshot({
+            type: 'png',
+            omitBackground: false  // Include background
+          });
+          console.log(`[Puppeteer] 📸 Body element screenshot taken: ${bodyScreenshot.length} bytes`);
+          imageBuffer = bodyScreenshot as Buffer;
+        } else {
+          throw new Error('Body element not found');
+        }
+      } catch (bodyErr) {
+        console.log('[Puppeteer] ⚠️ Body screenshot failed, using clip method:', bodyErr);
+
+        // Fallback to clip method
+        const clipScreenshot = await page.screenshot({
+          type: 'png',
+          clip: {
+            x: 0,
+            y: 0,
+            width,
+            height,
+          },
+          omitBackground: false,
+        });
+        console.log(`[Puppeteer] 📸 Clip screenshot taken: ${clipScreenshot.length} bytes`);
+        imageBuffer = clipScreenshot as Buffer;
+      }
+
+      console.log(`[Puppeteer] ✅ Image rendered successfully (${imageBuffer.length} bytes)`);
 
       return {
         imageBuffer: imageBuffer as Buffer,

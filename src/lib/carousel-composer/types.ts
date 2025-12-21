@@ -118,7 +118,7 @@ export interface ViewportModule {
     opacity?: number; // 0-100
   };
   width: number; // Default: 1080
-  height: number; // Default: 1350 (Instagram Portrait 4:5)
+  height: number; // Default: 1440 (Instagram Portrait)
 }
 
 /**

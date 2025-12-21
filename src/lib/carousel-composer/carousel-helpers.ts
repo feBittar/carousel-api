@@ -112,7 +112,7 @@ export function generateCarouselCSS(slideCount: number, freeImage?: FreeImageCon
 
   let css = `body {
   width: ${totalWidth}px;
-  height: 1350px;
+  height: 1440px;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -132,13 +132,13 @@ body::after {
   display: flex;
   flex-direction: row;
   width: ${totalWidth}px;
-  height: 1350px;
+  height: 1440px;
   position: relative; /* Required for absolute positioning of free-image */
 }
 
 .carousel-slide {
   width: 1080px;
-  height: 1350px;
+  height: 1440px;
   position: relative;
   flex-shrink: 0;
   background-size: cover !important;

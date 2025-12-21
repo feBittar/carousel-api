@@ -258,7 +258,7 @@ ${textItems}
 
     // Get viewport dimensions
     const viewportWidth = options.viewportWidth || 1080;
-    const viewportHeight = options.viewportHeight || 1350;
+    const viewportHeight = options.viewportHeight || 1440;
 
     // Generate vertical alignment
     const alignmentMap: Record<string, string> = {

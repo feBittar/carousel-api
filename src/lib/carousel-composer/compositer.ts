@@ -27,11 +27,12 @@ import { CUSTOM_FONTS } from '../constants/fonts';
 const DEFAULT_BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
 /**
- * Default viewport dimensions (Instagram portrait format 4:5)
+ * Default viewport dimensions (Instagram portrait format)
+ * Using 1440px height to match Puppeteer rendering dimensions
  */
 const DEFAULT_VIEWPORT = {
   width: 1080,
-  height: 1350,
+  height: 1440,
 };
 
 /**

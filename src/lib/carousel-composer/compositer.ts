@@ -48,6 +48,7 @@ const GOOGLE_FONTS = [
   'Open+Sans:wght@400;600;700;900',
   'Lato:wght@400;600;700;900',
   'Montserrat:wght@400;600;700;900',
+  'Bebas+Neue:wght@400',
   'Poppins:wght@400;600;700;900',
   'Quicksand:wght@400;600;700',
   'Nunito:wght@400;600;700;900',

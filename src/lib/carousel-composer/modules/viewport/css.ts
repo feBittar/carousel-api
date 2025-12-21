@@ -19,14 +19,19 @@ export function getViewportCss(data: ModuleData, options?: CompositionOptions): 
   // CSS para o body (background principal)
   const bodyStyles: string[] = [];
 
-  // Background: cor ou imagem
-  if (viewport.backgroundType === 'color') {
-    bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
-  } else if (viewport.backgroundType === 'image' && viewport.backgroundImage) {
+  // Background: imagem tem prioridade sobre cor
+  // FIX: Usar imagem se existir, mesmo que backgroundType esteja como 'color'
+  if (viewport.backgroundImage && viewport.backgroundImage.trim() !== '') {
     bodyStyles.push(`background-image: url(${viewport.backgroundImage});`);
     bodyStyles.push('background-size: cover;');
     bodyStyles.push('background-position: center;');
     bodyStyles.push('background-repeat: no-repeat;');
+    // Adiciona cor de fundo como fallback enquanto a imagem carrega
+    if (viewport.backgroundColor) {
+      bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
+    }
+  } else if (viewport.backgroundColor) {
+    bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
   }
 
   const bodyCss = bodyStyles.length > 0

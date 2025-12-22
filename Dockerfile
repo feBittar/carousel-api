@@ -27,11 +27,10 @@ RUN npm run build
 # ============================================================================
 FROM node:18-bullseye-slim
 
-# Install Puppeteer dependencies
+# Install Puppeteer dependencies (libs only, Puppeteer will download its own Chromium)
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     fonts-liberation \
-    libappindicator3-1 \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -63,23 +62,18 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxss1 \
     libxtst6 \
-    lsb-release \
     wget \
-    xdg-utils \
-    chromium \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Puppeteer to use installed Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+# Puppeteer will download its own Chromium during npm install
 
 WORKDIR /app
 
-# Copy package files and install production dependencies only
+# Copy package files and install dependencies (Puppeteer needs to download Chromium)
 COPY package*.json ./
 COPY package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist

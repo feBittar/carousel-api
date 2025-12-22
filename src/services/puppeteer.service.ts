@@ -115,8 +115,10 @@ export class PuppeteerService {
 
       // DEBUG: Check if CSS is actually being applied by checking computed styles
       const computedStyles = await page.evaluate(() => {
+        // @ts-ignore - runs in browser context
         const body = document.querySelector('body');
         if (!body) return null;
+        // @ts-ignore - runs in browser context
         const styles = window.getComputedStyle(body);
         return {
           backgroundColor: styles.backgroundColor,

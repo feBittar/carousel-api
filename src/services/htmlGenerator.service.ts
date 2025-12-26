@@ -52,10 +52,15 @@ export class HtmlGeneratorService {
     const options = {
       baseUrl: this.baseUrl,
       slideCount: 1, // Each slide is rendered individually (vertical mode)
+      // CRITICAL: Pass moduleOrder to respect layer configuration from editor
+      moduleOrder: slide.moduleOrder,
     };
 
     console.log('[Service] Calling composeTemplate with slideCount:', options.slideCount);
     console.log('[Service] Mode: vertical (each slide rendered individually)');
+    if (slide.moduleOrder) {
+      console.log('[Service] Module order (layers):', slide.moduleOrder.join(', '));
+    }
 
     const composed: ComposedTemplate = composeTemplate(
       enabledModuleIds,

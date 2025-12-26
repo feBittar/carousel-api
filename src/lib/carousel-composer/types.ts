@@ -1055,6 +1055,7 @@ export interface SlideConfig {
     type: string;
     data: ModuleData;
   }>;
+  moduleOrder?: string[]; // Order of content modules for rendering (layer control)
 }
 
 /**

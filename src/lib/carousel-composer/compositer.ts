@@ -60,6 +60,7 @@ const GOOGLE_FONTS = [
   // Fontes adicionadas para corrigir bug de fontes não carregando
   'PT+Serif:wght@400;700',
   'Libre+Baskerville:wght@400;700',
+  'Instrument+Serif:wght@400;600',
   'League+Spartan:wght@400;600;700;900',
 ];
 

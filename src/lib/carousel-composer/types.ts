@@ -1019,6 +1019,7 @@ export const styledChunkSchema = z.object({
   blurFadeDirection: z.enum(['horizontal', 'vertical', 'both']).optional(),
   blurFadeAmount: z.number().optional(),
   padding: z.string().optional(),
+  margin: z.string().optional(),
   lineBreak: z.boolean().optional(),
 });
 

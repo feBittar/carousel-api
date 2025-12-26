@@ -12,8 +12,9 @@ export interface FontDefinition {
 export const CUSTOM_FONTS: FontDefinition[] = [
   // Use apenas o nome base da família (sem variantes de peso)
   // O peso será selecionado separadamente no dropdown de Font Weight
-  // Note: Bebas Neue removed - now loaded from Google Fonts
-  // Note: Montserrat removed - now loaded from Google Fonts
+  // IMPORTANTE: NÃO adicionar aspas extras ao redor dos nomes - elas são adicionadas automaticamente no CSS
+  { name: 'Bebas Neue', family: 'Bebas Neue', filename: 'BebasNeue-Regular.ttf', weight: 400, style: 'normal', category: 'display' },
+  { name: 'Montserrat', family: 'Montserrat', filename: 'Montserrat-Regular.ttf', weight: 400, style: 'normal', category: 'sans-serif' },
   { name: 'Product Sans', family: 'Product Sans', filename: 'ProductSans-Regular.ttf', weight: 400, style: 'normal', category: 'sans-serif' },
   { name: 'Gilroy', family: 'Gilroy', filename: 'Gilroy-Black.ttf', weight: 900, style: 'normal', category: 'sans-serif' },
   { name: 'Akkordeon Ten', family: 'Akkordeon Ten', filename: 'akkordeon-ten.otf', weight: 400, style: 'normal', category: 'display' },
@@ -23,23 +24,22 @@ export const CUSTOM_FONTS: FontDefinition[] = [
 ];
 
 export const SYSTEM_FONTS: FontDefinition[] = [
-  { name: 'Arial', family: 'Arial, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Bebas Neue', family: 'Bebas Neue, sans-serif', filename: '', category: 'display' },
-  { name: 'Helvetica', family: 'Helvetica, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Times New Roman', family: "'Times New Roman', serif", filename: '', category: 'serif' },
-  { name: 'Georgia', family: 'Georgia, serif', filename: '', category: 'serif' },
-  { name: 'PT Serif', family: "'PT Serif', serif", filename: '', category: 'serif' },
-  { name: 'Libre Baskerville', family: "'Libre Baskerville', serif", filename: '', category: 'serif' },
-  { name: 'Courier New', family: "'Courier New', monospace", filename: '', category: 'monospace' },
-  { name: 'Verdana', family: 'Verdana, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Roboto', family: 'Roboto, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Open Sans', family: "'Open Sans', sans-serif", filename: '', category: 'sans-serif' },
-  { name: 'Lato', family: 'Lato, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'League Spartan', family: "'League Spartan', sans-serif", filename: '', category: 'sans-serif' },
-  { name: 'Inter', family: 'Inter, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Poppins', family: 'Poppins, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'Montserrat', family: 'Montserrat, sans-serif', filename: '', category: 'sans-serif' },
-  { name: 'System UI', family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", filename: '', category: 'sans-serif' }
+  { name: 'Arial', family: 'Arial', filename: '', category: 'sans-serif' },
+  { name: 'Helvetica', family: 'Helvetica', filename: '', category: 'sans-serif' },
+  { name: 'Times New Roman', family: 'Times New Roman', filename: '', category: 'serif' },
+  { name: 'Georgia', family: 'Georgia', filename: '', category: 'serif' },
+  { name: 'PT Serif', family: 'PT Serif', filename: '', category: 'serif' },
+  { name: 'Libre Baskerville', family: 'Libre Baskerville', filename: '', category: 'serif' },
+  { name: 'Courier New', family: 'Courier New', filename: '', category: 'monospace' },
+  { name: 'Verdana', family: 'Verdana', filename: '', category: 'sans-serif' },
+  { name: 'Roboto', family: 'Roboto', filename: '', category: 'sans-serif' },
+  { name: 'Open Sans', family: 'Open Sans', filename: '', category: 'sans-serif' },
+  { name: 'Lato', family: 'Lato', filename: '', category: 'sans-serif' },
+  { name: 'League Spartan', family: 'League Spartan', filename: '', category: 'sans-serif' },
+  { name: 'Inter', family: 'Inter', filename: '', category: 'sans-serif' },
+  { name: 'Instrument Serif', family: 'Instrument Serif', filename: '', category: 'serif' },
+  { name: 'Poppins', family: 'Poppins', filename: '', category: 'sans-serif' },
+  { name: 'System UI', family: 'System UI', filename: '', category: 'sans-serif' }
 ];
 
 export const ALL_FONTS = [...SYSTEM_FONTS, ...CUSTOM_FONTS];

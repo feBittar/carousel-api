@@ -1,5 +1,6 @@
 import { ModuleData, RenderContext } from '../types';
 import { CornersData, Corner } from './schema';
+import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
  * Helper to ensure CSS value has a unit
@@ -165,7 +166,7 @@ function getTextStyleCSS(corner: Corner): string {
   let css = '';
 
   if (textStyle.fontFamily) {
-    css += `font-family: ${textStyle.fontFamily};\n      `;
+    css += `font-family: ${formatFontFamily(textStyle.fontFamily)};\n      `;
   }
   if (textStyle.fontSize) {
     css += `font-size: ${textStyle.fontSize};\n      `;

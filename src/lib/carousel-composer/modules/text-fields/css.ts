@@ -1,5 +1,6 @@
 import { ModuleData, CompositionOptions } from '../../types';
 import { TextFieldsData, TextField } from './schema';
+import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
  * Helper to calculate position CSS based on special position or manual values
@@ -92,7 +93,7 @@ export function getTextFieldsCss(data: ModuleData, options?: CompositionOptions)
       // Base text styles
       // Don't set fontSize if auto-sizing is enabled (script will handle all)
       const textStyles = `
-      font-family: ${style.fontFamily || 'Arial'};
+      font-family: ${formatFontFamily(style.fontFamily || 'Arial')};
       ${!autoSizeEnabled ? `font-size: ${style.fontSize || '24px'};` : '/* font-size controlled by auto-size.js */'}
       font-weight: ${style.fontWeight || '400'};
       color: ${style.color || '#000000'};

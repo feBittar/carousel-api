@@ -217,6 +217,7 @@ export interface StyledChunk {
   blurFadeDirection?: 'horizontal' | 'vertical' | 'both'; // Direção do fade
   blurFadeAmount?: number; // Porcentagem do fade (0-25)
   padding?: string; // Padding para as barras de fundo
+  margin?: string; // Margin para espaçamentos externos (ex: deslocar texto)
   lineBreak?: boolean; // Adiciona quebra de linha (<br>) após o texto
 }
 

@@ -1,5 +1,6 @@
 import { ModuleData } from '../types';
 import { BulletsData } from './schema';
+import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
  * Generates CSS for the Bullets module
@@ -41,7 +42,7 @@ export function getBulletsCss(data: ModuleData): string {
     }
 
     .bullet-text-${index + 1} {
-      font-family: ${style.fontFamily || 'Arial'};
+      font-family: ${formatFontFamily(style.fontFamily || 'Arial')};
       font-size: ${style.fontSize || '18px'};
       font-weight: ${style.fontWeight || '400'};
       color: ${style.color || '#000000'};

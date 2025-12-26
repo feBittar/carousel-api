@@ -1,5 +1,6 @@
 import { ModuleData } from '../types';
 import { ImageTextBoxData } from './schema';
+import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
  * Helper to get left percentage from split ratio
@@ -65,7 +66,7 @@ export function getImageTextBoxCss(data: ModuleData): string {
 
       return `
     .image-text-box-text-field-${index + 1} {
-      font-family: ${style.fontFamily || 'Arial'};
+      font-family: ${formatFontFamily(style.fontFamily || 'Arial')};
       font-size: ${style.fontSize || '24px'};
       font-weight: ${style.fontWeight || '400'};
       color: ${style.color || '#000000'};

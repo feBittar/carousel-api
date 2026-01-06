@@ -1,10 +1,14 @@
 // @ts-nocheck - Module compatibility types
 import { composeTemplate } from '../lib/carousel-composer';
 import {
-  CarouselConfig,
-  SlideConfig,
+  CarouselModularConfig,
+  CarouselSlide,
   ComposedTemplate,
 } from '../lib/carousel-composer/types';
+
+// Type aliases for backward compatibility
+type CarouselConfig = CarouselModularConfig;
+type SlideConfig = CarouselSlide;
 
 /**
  * HTML Generator Service
@@ -49,12 +53,17 @@ export class HtmlGeneratorService {
     const modulesData = slide.modules;
 
     // Compose template using carousel-composer library
+    // IMPORTANT: Pass visualLayout and moduleOrder from the slide to replicate
+    // the exact positioning and ordering from the visual editor
     const composed: ComposedTemplate = composeTemplate(
       enabledModuleIds,
       modulesData,
       {
         baseUrl: this.baseUrl,
         slideCount: 1, // Each slide is rendered individually
+        moduleOrder: slide.moduleOrder, // Preserve module rendering order
+        visualLayout: slide.visualLayout, // Apply visual editor positions
+        includeDataAttributes: false, // Disable for Puppeteer (no need for data attributes in final render)
       }
     );
 

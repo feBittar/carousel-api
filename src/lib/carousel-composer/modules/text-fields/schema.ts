@@ -35,6 +35,9 @@ export const textFieldSchema = z.object({
 
   /** Padding from edge when using special position (percentage 0-20) */
   specialPadding: z.number().min(0).max(20).default(8),
+
+  /** If true, this text receives accent color from active palette */
+  useAccentColor: z.boolean().default(false),
 });
 
 export type TextField = z.infer<typeof textFieldSchema>;
@@ -67,11 +70,11 @@ export const textFieldsSchema = z.object({
 
   /** Array of text field configurations */
   fields: z.array(textFieldSchema).default([
-    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '50px', left: '50px' }, specialPosition: 'none', specialPadding: 8 },
-    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '100px', left: '50px' }, specialPosition: 'none', specialPadding: 8 },
-    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '150px', left: '50px' }, specialPosition: 'none', specialPadding: 8 },
-    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '200px', left: '50px' }, specialPosition: 'none', specialPadding: 8 },
-    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '250px', left: '50px' }, specialPosition: 'none', specialPadding: 8 },
+    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '50px', left: '50px' }, specialPosition: 'none', specialPadding: 8, useAccentColor: false },
+    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '100px', left: '50px' }, specialPosition: 'none', specialPadding: 8, useAccentColor: false },
+    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '150px', left: '50px' }, specialPosition: 'none', specialPadding: 8, useAccentColor: false },
+    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '200px', left: '50px' }, specialPosition: 'none', specialPadding: 8, useAccentColor: false },
+    { content: '', style: {}, styledChunks: [], freePosition: false, position: { top: '250px', left: '50px' }, specialPosition: 'none', specialPadding: 8, useAccentColor: false },
   ]),
 });
 

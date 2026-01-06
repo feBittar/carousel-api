@@ -1,4 +1,7 @@
-import { CarouselConfig } from '../lib/carousel-composer/types';
+import { CarouselModularConfig } from '../lib/carousel-composer/types';
+
+// Type alias for backward compatibility
+type CarouselConfig = CarouselModularConfig;
 
 // ============================================================================
 // API REQUEST/RESPONSE TYPES

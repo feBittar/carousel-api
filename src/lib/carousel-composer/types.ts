@@ -78,6 +78,23 @@ export interface CarouselModularConfig {
   slides: CarouselSlide[];
 }
 
+/**
+ * Visual positioning for a single module in the editor
+ * Used by the visual editor to store absolute positioning
+ */
+export interface VisualModuleLayout {
+  x: number; // Horizontal position in pixels
+  y: number; // Vertical position in pixels
+  width?: number; // Width in pixels (optional)
+  height?: number; // Height in pixels (optional)
+}
+
+/**
+ * Map of module IDs to their visual positions
+ * Example: { "textFields-0": { x: 100, y: 50, width: 400, height: 80 } }
+ */
+export type VisualLayoutData = Record<string, VisualModuleLayout>;
+
 export interface CarouselSlide {
   id: string; // UUID
   order: number;
@@ -98,6 +115,8 @@ export interface CarouselSlide {
     twitterPost?: TwitterPostModule;
     freeImage?: FreeImageModule;
   };
+  moduleOrder?: string[]; // Order of content modules for rendering
+  visualLayout?: VisualLayoutData; // Visual editor positions (optional)
 }
 
 // ============================================================================
@@ -735,6 +754,9 @@ export interface CompositionOptions {
   viewportHeight?: number; // Viewport height for pixel calculations
   carouselMode?: 'vertical' | 'horizontal'; // Layout mode
   slideCount?: number; // Number of slides for horizontal carousel
+  moduleOrder?: string[]; // Order of content modules for rendering
+  visualLayout?: VisualLayoutData; // Visual editor positions for absolute positioning
+  includeDataAttributes?: boolean; // Add data-module-id attributes for visual editing
   freeImage?: {
     enabled: boolean;
     url: string;

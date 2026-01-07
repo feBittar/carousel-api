@@ -548,9 +548,11 @@ function injectSubElementStyles(
     ].filter(Boolean).join('; ');
 
     // Find and inject style into the element
-    // Matches: <div class="text-item-1"> or <div class="corner-2">
+    // Matches: <div class="text-item text-item-1"> or <div class="corner corner-1">
+    // The class might be part of multiple classes, so we match it anywhere in the class attribute
+    const className = selector.substring(1); // Remove leading dot
     const elementRegex = new RegExp(
-      `(<div\\s+class="${selector.substring(1)}")(\\s|>)`,
+      `(<div\\s+class="[^"]*\\b${className}\\b[^"]*")(\\s|>)`,
       'g'
     );
 

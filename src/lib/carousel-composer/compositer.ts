@@ -647,7 +647,15 @@ function collectHTML(
       let wrappedHTML: string;
       if (moduleId !== 'viewport' && options.visualLayout) {
         // Get layout for this module from visualLayout map
-        const moduleLayout = options.visualLayout[moduleId];
+        // The frontend may save with base key (e.g., 'textFields') or
+        // with sub-index key (e.g., 'textFields-0'). Try both.
+        let moduleLayout = options.visualLayout[moduleId];
+
+        // If no direct match, try with -0 suffix (first sub-element)
+        if (!moduleLayout && options.visualLayout[`${moduleId}-0`]) {
+          moduleLayout = options.visualLayout[`${moduleId}-0`];
+          console.log(`[Compositer] 📍 Using sub-key ${moduleId}-0 for module ${moduleId}`);
+        }
 
         // Inject data-module-id and positioning
         const htmlWithDataAttr = injectDataModuleId(html, moduleId, module.name, moduleLayout);
@@ -661,6 +669,8 @@ function collectHTML(
             width: moduleLayout.width,
             height: moduleLayout.height
           });
+        } else {
+          console.log(`[Compositer] ⚠️ No visualLayout found for ${moduleId}`);
         }
       } else {
         wrappedHTML = `<!-- ${module.name} -->\n${html}`;

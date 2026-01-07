@@ -485,6 +485,64 @@ function collectCSS(
 // ============================================================================
 
 /**
+ * Injects data-module-id attribute and visual layout positioning into HTML
+ *
+ * @param html - The module's HTML content
+ * @param moduleId - Unique module identifier (e.g., "textFields-0")
+ * @param moduleName - Human-readable module name
+ * @param visualLayout - Optional visual layout data for positioning
+ * @returns Modified HTML with data-module-id attribute and optional positioning
+ */
+function injectDataModuleId(
+  html: string,
+  moduleId: string,
+  moduleName: string,
+  visualLayout?: { x: number; y: number; width?: number; height?: number }
+): string {
+  // Build the attributes and styles to inject
+  let dataAttrs = `data-module-id="${moduleId}" data-module-name="${moduleName}"`;
+
+  // If visualLayout exists, add absolute positioning
+  if (visualLayout && (visualLayout.x !== 0 || visualLayout.y !== 0)) {
+    const positionStyle = [
+      'position: absolute',
+      `left: ${visualLayout.x}px`,
+      `top: ${visualLayout.y}px`,
+      visualLayout.width ? `width: ${visualLayout.width}px` : '',
+      visualLayout.height ? `height: ${visualLayout.height}px` : '',
+      'z-index: 50', // Ensure positioned elements are above others
+    ].filter(Boolean).join('; ');
+
+    dataAttrs += ` style="${positionStyle}"`;
+  }
+
+  // Find the first HTML tag and inject the attributes
+  // This regex handles:
+  // - Leading whitespace/newlines
+  // - Self-closing tags
+  // - Tags with existing attributes
+  // - Tags with class="" or other attributes
+  const firstTagRegex = /(<\s*)([a-zA-Z][a-zA-Z0-9]*)(\s|>|\/)/;
+  const match = html.match(firstTagRegex);
+
+  if (match) {
+    // Inject attributes after the tag name
+    const result = html.replace(
+      firstTagRegex,
+      `$1$2 ${dataAttrs}$3`
+    );
+    return result;
+  }
+
+  // If no match (unlikely), wrap in a span as fallback
+  console.warn(`[Compositer] Could not inject data-module-id into ${moduleId}, using span wrapper`);
+  const fallbackStyle = visualLayout && (visualLayout.x !== 0 || visualLayout.y !== 0)
+    ? `position: absolute; left: ${visualLayout.x}px; top: ${visualLayout.y}px; z-index: 50;`
+    : 'display: contents;';
+  return `<span data-module-id="${moduleId}" data-module-name="${moduleName}" style="${fallbackStyle}">${html}</span>`;
+}
+
+/**
  * Parse layer ID to check if it's a sub-layer
  */
 function parseLayerId(layerId: string): { baseModule: string; subIndex: number | null } {
@@ -585,7 +643,28 @@ function collectHTML(
 
       if (!html) continue;
 
-      const wrappedHTML = `<!-- ${module.name} -->\n${html}`;
+      // Apply visualLayout positioning if available (skip viewport - it's the background)
+      let wrappedHTML: string;
+      if (moduleId !== 'viewport' && options.visualLayout) {
+        // Get layout for this module from visualLayout map
+        const moduleLayout = options.visualLayout[moduleId];
+
+        // Inject data-module-id and positioning
+        const htmlWithDataAttr = injectDataModuleId(html, moduleId, module.name, moduleLayout);
+        wrappedHTML = `<!-- ${module.name} -->\n${htmlWithDataAttr}`;
+
+        // Log when visualLayout is applied
+        if (moduleLayout) {
+          console.log(`[Compositer] ✅ Applied visualLayout to ${moduleId}:`, {
+            x: moduleLayout.x,
+            y: moduleLayout.y,
+            width: moduleLayout.width,
+            height: moduleLayout.height
+          });
+        }
+      } else {
+        wrappedHTML = `<!-- ${module.name} -->\n${html}`;
+      }
 
       // Categorize module
       if (moduleId === 'viewport') {

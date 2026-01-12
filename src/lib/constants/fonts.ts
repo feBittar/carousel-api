@@ -39,7 +39,22 @@ export const SYSTEM_FONTS: FontDefinition[] = [
   { name: 'Inter', family: 'Inter', filename: '', category: 'sans-serif' },
   { name: 'Instrument Serif', family: 'Instrument Serif', filename: '', category: 'serif' },
   { name: 'Poppins', family: 'Poppins', filename: '', category: 'sans-serif' },
-  { name: 'System UI', family: 'System UI', filename: '', category: 'sans-serif' }
+  { name: 'System UI', family: 'System UI', filename: '', category: 'sans-serif' },
+  { name: 'Abril Fatface', family: 'Abril Fatface', filename: '', category: 'display' },
+  { name: 'Fira Sans', family: 'Fira Sans', filename: '', category: 'sans-serif' },
+  { name: 'EB Garamond', family: 'EB Garamond', filename: '', category: 'serif' },
+  { name: 'Figtree', family: 'Figtree', filename: '', category: 'sans-serif' },
+  { name: 'Lora', family: 'Lora', filename: '', category: 'serif' },
+  { name: 'Bricolage Grotesque', family: 'Bricolage Grotesque', filename: '', category: 'sans-serif' },
+  { name: 'IBM Plex Mono', family: 'IBM Plex Mono', filename: '', category: 'monospace' },
+  { name: 'Manrope', family: 'Manrope', filename: '', category: 'sans-serif' },
+  { name: 'Roboto Condensed', family: 'Roboto Condensed', filename: '', category: 'sans-serif' },
+  { name: 'DM Sans', family: 'DM Sans', filename: '', category: 'sans-serif' },
+  { name: 'Instrument Sans', family: 'Instrument Sans', filename: '', category: 'sans-serif' },
+  { name: 'Jost', family: 'Jost', filename: '', category: 'sans-serif' },
+  { name: 'Space Grotesk', family: 'Space Grotesk', filename: '', category: 'sans-serif' },
+  { name: 'Cormorant SC', family: 'Cormorant SC', filename: '', category: 'serif' },
+  { name: 'PT Serif Caption', family: 'PT Serif Caption', filename: '', category: 'serif' }
 ];
 
 export const ALL_FONTS = [...SYSTEM_FONTS, ...CUSTOM_FONTS];

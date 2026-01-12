@@ -331,8 +331,8 @@ function generateDuoCornerCSS(corners: Corner[], baseUrl?: string): string {
     css += generateSlide1CSS(cornerNum, corner, position);
     css += generateSlide2CSS(cornerNum, corner, position);
 
-    // Text-specific CSS
-    if (corner.type === 'text') {
+    // Text-specific CSS (for both 'text' and 'contador' types)
+    if (corner.type === 'text' || corner.type === 'contador') {
       css += `
     .corner-${cornerNum}-s1 .corner-${cornerNum}-text,
     .corner-${cornerNum}-s2 .corner-${cornerNum}-text {
@@ -447,8 +447,8 @@ export function getCornersCss(data: ModuleData, context?: RenderContext): string
     }
     `;
 
-      // Text-specific CSS
-      if (corner.type === 'text') {
+      // Text-specific CSS (for both 'text' and 'contador' types)
+      if (corner.type === 'text' || corner.type === 'contador') {
         css += `
     .corner-${cornerNum}-text {
       ${getTextStyleCSS(corner)}

@@ -62,6 +62,21 @@ const GOOGLE_FONTS = [
   'Libre+Baskerville:wght@400;700',
   'Instrument+Serif:wght@400;600',
   'League+Spartan:wght@400;600;700;900',
+  'Abril+Fatface',
+  'Fira+Sans:wght@300;400;500;600;700;800;900',
+  'EB+Garamond:wght@400;500;600;700;800',
+  'Figtree:wght@300;400;500;600;700;800;900',
+  'Lora:wght@400;500;600;700',
+  'Bricolage+Grotesque:wght@200;300;400;500;600;700;800',
+  'IBM+Plex+Mono:wght@400;500;600;700',
+  'Manrope:wght@200;300;400;500;600;700;800',
+  'Roboto+Condensed:wght@300;400;500;600;700;800;900',
+  'DM+Sans:wght@400;500;600;700',
+  'Instrument+Sans:wght@400;500;600;700',
+  'Jost:wght@300;400;500;600;700;800;900',
+  'Space+Grotesk:wght@300;400;500;600;700',
+  'Cormorant+SC:wght@300;400;500;600;700',
+  'PT+Serif+Caption:wght@400;700',
 ];
 
 /**

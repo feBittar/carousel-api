@@ -46,7 +46,7 @@ function getSvgContent(corner: Corner, baseUrl: string = ''): string {
 /**
  * Helper to generate HTML for a single corner
  */
-function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = ''): string {
+function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', context?: RenderContext): string {
   if (corner.type === 'none') {
     return '';
   }
@@ -54,6 +54,14 @@ function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = ''):
   if (corner.type === 'text') {
     const text = corner.text || '';
     return `<span class="corner-${cornerNum}-text">${text}</span>`;
+  }
+
+  if (corner.type === 'contador') {
+    const slideIndex = (context as any)?.currentSlideIndex ?? context?.slideIndex ?? 0;
+    const currentSlide = slideIndex + 1;
+    const totalSlides = context?.totalSlides ?? 1;
+    const contadorText = `${currentSlide}/${totalSlides}`;
+    return `<span class="corner-${cornerNum}-text">${contadorText}</span>`;
   }
 
   if (corner.type === 'svg') {
@@ -80,10 +88,10 @@ export function getCornersHtml(data: ModuleData, context?: RenderContext): strin
   const isDuo = isDuoModeActive(context);
 
   // Generate HTML for each corner
-  const corner1Content = getCornerHtml(corners[0], 1, baseUrl);
-  const corner2Content = getCornerHtml(corners[1], 2, baseUrl);
-  const corner3Content = getCornerHtml(corners[2], 3, baseUrl);
-  const corner4Content = getCornerHtml(corners[3], 4, baseUrl);
+  const corner1Content = getCornerHtml(corners[0], 1, baseUrl, context);
+  const corner2Content = getCornerHtml(corners[1], 2, baseUrl, context);
+  const corner3Content = getCornerHtml(corners[2], 3, baseUrl, context);
+  const corner4Content = getCornerHtml(corners[3], 4, baseUrl, context);
 
   if (isDuo) {
     // Duo mode: 8 corners (4 per slide) with -s1 and -s2 classes
@@ -116,14 +124,14 @@ export function getCornersHtml(data: ModuleData, context?: RenderContext): strin
  * Helper to generate corner content placeholders for template replacement
  * Used by legacy templates that inject corners via {{{corner1Content}}} syntax
  */
-export function getCornerPlaceholders(data: ModuleData, baseUrl: string = ''): Record<string, string> {
+export function getCornerPlaceholders(data: ModuleData, baseUrl: string = '', context?: RenderContext): Record<string, string> {
   const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
 
   return {
-    corner1Content: getCornerHtml(corners[0], 1, baseUrl),
-    corner2Content: getCornerHtml(corners[1], 2, baseUrl),
-    corner3Content: getCornerHtml(corners[2], 3, baseUrl),
-    corner4Content: getCornerHtml(corners[3], 4, baseUrl),
+    corner1Content: getCornerHtml(corners[0], 1, baseUrl, context),
+    corner2Content: getCornerHtml(corners[1], 2, baseUrl, context),
+    corner3Content: getCornerHtml(corners[2], 3, baseUrl, context),
+    corner4Content: getCornerHtml(corners[3], 4, baseUrl, context),
   };
 }

@@ -4,7 +4,7 @@ import { textStyleSchema } from '../types';
 /**
  * Corner element type
  */
-export const cornerTypeEnum = z.enum(['none', 'text', 'svg']);
+export const cornerTypeEnum = z.enum(['none', 'text', 'svg', 'contador']);
 export type CornerType = z.infer<typeof cornerTypeEnum>;
 
 /**

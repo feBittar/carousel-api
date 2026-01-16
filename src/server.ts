@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import routes from './routes';
 import { puppeteerService } from './services/puppeteer.service';
+import { logger } from './lib/logger';
 
 // Load environment variables
 dotenv.config();
@@ -66,9 +67,18 @@ app.use('/svgs', express.static('public/svgs'));
 // Request logging
 app.use(morgan('combined'));
 
+// Correlation ID middleware
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const correlationId = (req.headers['x-correlation-id'] as string) ||
+    `vps-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  logger.setContext({ correlationId });
+  res.setHeader('x-correlation-id', correlationId);
+  next();
+});
+
 // Request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
-  console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  logger.info(`${req.method} ${req.path}`, { method: req.method, path: req.path });
   next();
 });
 

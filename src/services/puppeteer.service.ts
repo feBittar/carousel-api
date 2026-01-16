@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { logger } from '../lib/logger';
 
 /**
  * Resultado da renderização de uma imagem
@@ -65,10 +66,13 @@ export class PuppeteerService {
     width: number = 1080,
     height: number = 1440
   ): Promise<RenderResult> {
+    const stopTimer = logger.startTimer('puppeteer_render');
+
     if (!this.browser) {
       await this.initBrowser();
     }
 
+    logger.info('Puppeteer render started', { operation: 'puppeteer_render', width, height, htmlSize: html.length });
     console.log(`[Puppeteer] Rendering HTML to image (${width}x${height})...`);
 
     const page: Page = await this.browser!.newPage();
@@ -165,6 +169,7 @@ export class PuppeteerService {
       }
 
       console.log(`[Puppeteer] ✅ Image rendered successfully (${imageBuffer.length} bytes)`);
+      stopTimer();
 
       return {
         imageBuffer: imageBuffer as Buffer,
@@ -172,6 +177,8 @@ export class PuppeteerService {
         height,
       };
     } catch (error) {
+      stopTimer();
+      logger.error('Puppeteer render failed', { operation: 'puppeteer_render' }, error as Error);
       console.error('[Puppeteer] ❌ Error rendering image:', error);
       throw new Error(`Failed to render image: ${error}`);
     } finally {

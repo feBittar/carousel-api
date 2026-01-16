@@ -89,8 +89,8 @@ export class HtmlGeneratorService {
       throw new Error('Carousel config must have at least 1 slide');
     }
 
-    if (config.slides.length > 10) {
-      throw new Error('Carousel config cannot have more than 10 slides');
+    if (config.slides.length > 20) {
+      throw new Error('Carousel config cannot have more than 20 slides');
     }
 
     for (const slide of config.slides) {

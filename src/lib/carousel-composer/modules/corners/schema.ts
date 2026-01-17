@@ -4,8 +4,20 @@ import { textStyleSchema } from '../types';
 /**
  * Corner element type
  */
-export const cornerTypeEnum = z.enum(['none', 'text', 'svg', 'contador']);
+export const cornerTypeEnum = z.enum(['none', 'text', 'svg', 'contador', 'dynamic']);
 export type CornerType = z.infer<typeof cornerTypeEnum>;
+
+/**
+ * Dynamic data source options
+ */
+export const dynamicSourceEnum = z.enum([
+  'slide_counter',      // "1/n" - contador de slides
+  'company_name',       // Nome da empresa
+  'instagram_handle',   // @instagram
+  'logo',              // Logo da empresa (SVG/imagem)
+  'industry',          // Setor/indústria
+]);
+export type DynamicSource = z.infer<typeof dynamicSourceEnum>;
 
 /**
  * Special position for corner placement
@@ -31,9 +43,9 @@ export const cornerSchema = z.object({
 
   /** Text styling (when type = 'text') */
   textStyle: textStyleSchema.default({
-    fontFamily: 'Arial Black',
+    fontFamily: 'Montserrat',
     fontSize: '32px',
-    fontWeight: '900',
+    fontWeight: '300',
     color: '#000000',
     textDecoration: 'none',
   }),
@@ -55,6 +67,9 @@ export const cornerSchema = z.object({
 
   /** SVG height */
   svgHeight: z.string().default('60px'),
+
+  /** Dynamic data source (when type = 'dynamic') */
+  dynamicSource: dynamicSourceEnum.default('slide_counter'),
 
   /** Special position preset */
   specialPosition: cornerSpecialPositionEnum.default('none'),
@@ -80,9 +95,9 @@ export const cornersSchema = z.object({
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -92,6 +107,7 @@ export const cornersSchema = z.object({
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'top-left',
       paddingX: 40,
       paddingY: 40,
@@ -101,9 +117,9 @@ export const cornersSchema = z.object({
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -113,6 +129,7 @@ export const cornersSchema = z.object({
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'top-right',
       paddingX: 40,
       paddingY: 40,
@@ -122,9 +139,9 @@ export const cornersSchema = z.object({
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -134,6 +151,7 @@ export const cornersSchema = z.object({
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'bottom-left',
       paddingX: 40,
       paddingY: 40,
@@ -143,9 +161,9 @@ export const cornersSchema = z.object({
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -155,6 +173,7 @@ export const cornersSchema = z.object({
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'bottom-right',
       paddingX: 40,
       paddingY: 40,
@@ -173,9 +192,9 @@ export const cornersDefaults: CornersData = {
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -185,6 +204,7 @@ export const cornersDefaults: CornersData = {
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'top-left',
       paddingX: 40,
       paddingY: 40,
@@ -193,9 +213,9 @@ export const cornersDefaults: CornersData = {
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -205,6 +225,7 @@ export const cornersDefaults: CornersData = {
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'top-right',
       paddingX: 40,
       paddingY: 40,
@@ -213,9 +234,9 @@ export const cornersDefaults: CornersData = {
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -225,6 +246,7 @@ export const cornersDefaults: CornersData = {
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'bottom-left',
       paddingX: 40,
       paddingY: 40,
@@ -233,9 +255,9 @@ export const cornersDefaults: CornersData = {
       type: 'none',
       text: '',
       textStyle: {
-        fontFamily: 'Arial Black',
+        fontFamily: 'Montserrat',
         fontSize: '32px',
-        fontWeight: '900',
+        fontWeight: '300',
         color: '#000000',
         textDecoration: 'none',
       },
@@ -245,6 +267,7 @@ export const cornersDefaults: CornersData = {
       svgColor: '#ffffff',
       svgWidth: '60px',
       svgHeight: '60px',
+      dynamicSource: 'slide_counter',
       specialPosition: 'bottom-right',
       paddingX: 40,
       paddingY: 40,

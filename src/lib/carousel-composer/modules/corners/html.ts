@@ -1,5 +1,5 @@
 import { ModuleData, RenderContext } from '../types';
-import { CornersData, Corner } from './schema';
+import { CornersData, Corner, DynamicSource } from './schema';
 
 /**
  * Helper to convert relative URLs to absolute URLs
@@ -23,10 +23,38 @@ function resolveUrl(url: string, baseUrl?: string): string {
 }
 
 /**
+ * Helper to get dynamic data based on source
+ */
+function getDynamicData(source: DynamicSource, context?: RenderContext): string {
+  const companyProfile = (context as any)?.companyProfile;
+
+  switch (source) {
+    case 'slide_counter': {
+      const slideIndex = (context as any)?.currentSlideIndex ?? context?.slideIndex ?? 0;
+      const currentSlide = slideIndex + 1;
+      const totalSlides = context?.totalSlides ?? 1;
+      return `${currentSlide}/${totalSlides}`;
+    }
+    case 'company_name':
+      return companyProfile?.company_name || '';
+    case 'instagram_handle': {
+      const handle = companyProfile?.social_media_handles?.instagram || '';
+      return handle ? (handle.startsWith('@') ? handle : `@${handle}`) : '';
+    }
+    case 'logo':
+      return companyProfile?.logo_url || '';
+    case 'industry':
+      return companyProfile?.industry || '';
+    default:
+      return '';
+  }
+}
+
+/**
  * Helper to fetch SVG content from URL
  * Note: In actual implementation, this would be async and cached
  */
-function getSvgContent(corner: Corner, baseUrl: string = ''): string {
+function getSvgContent(corner: Corner, baseUrl: string = '', isDynamic: boolean = false): string {
   // If svgContent is provided inline, use it
   if (corner.svgContent && corner.svgContent.trim()) {
     return corner.svgContent;
@@ -36,6 +64,13 @@ function getSvgContent(corner: Corner, baseUrl: string = ''): string {
   if (corner.svgUrl && corner.svgUrl.trim() && corner.svgUrl !== 'none') {
     // Convert relative URLs to absolute URLs for Puppeteer
     const absoluteUrl = resolveUrl(corner.svgUrl, baseUrl);
+
+    // For dynamic logos, apply inline mask-image style for runtime substitution
+    if (isDynamic) {
+      const svgColor = corner.svgColor || '#ffffff';
+      return `<div class="corner-svg-mask" data-svg-url="${absoluteUrl}" style="background-color: ${svgColor}; -webkit-mask-image: url('${absoluteUrl}'); mask-image: url('${absoluteUrl}');"></div>`;
+    }
+
     // Using div with data attribute - mask-image will be applied via CSS
     return `<div class="corner-svg-mask" data-svg-url="${absoluteUrl}"></div>`;
   }
@@ -66,6 +101,24 @@ function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', 
 
   if (corner.type === 'svg') {
     return getSvgContent(corner, baseUrl);
+  }
+
+  if (corner.type === 'dynamic') {
+    const dynamicSource = (corner as any).dynamicSource || 'slide_counter';
+    const dynamicData = getDynamicData(dynamicSource, context);
+
+    // If dynamic source is logo, render as SVG
+    if (dynamicSource === 'logo' && dynamicData) {
+      const logoCorner = { ...corner, svgUrl: dynamicData, type: 'svg' } as Corner;
+      return getSvgContent(logoCorner, baseUrl, true);
+    }
+
+    // Otherwise, render as text
+    if (dynamicData) {
+      return `<span class="corner-${cornerNum}-text">${dynamicData}</span>`;
+    }
+
+    return '';
   }
 
   return '';

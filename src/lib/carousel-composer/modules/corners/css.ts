@@ -331,8 +331,12 @@ function generateDuoCornerCSS(corners: Corner[], baseUrl?: string): string {
     css += generateSlide1CSS(cornerNum, corner, position);
     css += generateSlide2CSS(cornerNum, corner, position);
 
-    // Text-specific CSS (for both 'text' and 'contador' types)
-    if (corner.type === 'text' || corner.type === 'contador') {
+    // Check if dynamic corner renders as text or SVG
+    const isDynamicText = corner.type === 'dynamic' && (corner as any).dynamicSource !== 'logo';
+    const isDynamicSvg = corner.type === 'dynamic' && (corner as any).dynamicSource === 'logo';
+
+    // Text-specific CSS (for 'text', 'contador', and 'dynamic' text-based types)
+    if (corner.type === 'text' || corner.type === 'contador' || isDynamicText) {
       css += `
     .corner-${cornerNum}-s1 .corner-${cornerNum}-text,
     .corner-${cornerNum}-s2 .corner-${cornerNum}-text {
@@ -344,7 +348,7 @@ function generateDuoCornerCSS(corners: Corner[], baseUrl?: string): string {
     }
 
     // SVG-specific CSS
-    if (corner.type === 'svg') {
+    if (corner.type === 'svg' || isDynamicSvg) {
       const svgWidth = ensureCssUnit(corner.svgWidth, 'auto');
       const svgHeight = ensureCssUnit(corner.svgHeight, 'auto');
       const svgColor = corner.svgColor || '#ffffff';
@@ -447,8 +451,12 @@ export function getCornersCss(data: ModuleData, context?: RenderContext): string
     }
     `;
 
-      // Text-specific CSS (for both 'text' and 'contador' types)
-      if (corner.type === 'text' || corner.type === 'contador') {
+      // Check if dynamic corner renders as text or SVG
+      const isDynamicText = corner.type === 'dynamic' && (corner as any).dynamicSource !== 'logo';
+      const isDynamicSvg = corner.type === 'dynamic' && (corner as any).dynamicSource === 'logo';
+
+      // Text-specific CSS (for 'text', 'contador', and 'dynamic' text-based types)
+      if (corner.type === 'text' || corner.type === 'contador' || isDynamicText) {
         css += `
     .corner-${cornerNum}-text {
       ${getTextStyleCSS(corner)}
@@ -459,7 +467,7 @@ export function getCornersCss(data: ModuleData, context?: RenderContext): string
       }
 
       // SVG-specific CSS
-      if (corner.type === 'svg') {
+      if (corner.type === 'svg' || isDynamicSvg) {
         const svgWidth = ensureCssUnit(corner.svgWidth, 'auto');
         const svgHeight = ensureCssUnit(corner.svgHeight, 'auto');
         const svgColor = corner.svgColor || '#ffffff';

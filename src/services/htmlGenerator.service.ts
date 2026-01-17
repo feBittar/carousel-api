@@ -4,6 +4,7 @@ import {
   CarouselModularConfig,
   CarouselSlide,
   ComposedTemplate,
+  CompanyProfile,
 } from '../lib/carousel-composer/types';
 
 // Type aliases for backward compatibility
@@ -24,17 +25,21 @@ export class HtmlGeneratorService {
   /**
    * Gera HTML para um carousel completo (todos os slides)
    * @param config Configuração do carousel com todos os slides
+   * @param companyProfile Optional company profile for dynamic corner elements
    * @returns Array de HTML strings (1 por slide)
    */
-  generateCarousel(config: CarouselConfig): string[] {
+  generateCarousel(config: CarouselConfig, companyProfile?: CompanyProfile): string[] {
     console.log(`[HTML Generator] Generating ${config.slides.length} slides...`);
+    if (companyProfile) {
+      console.log(`[HTML Generator] Company profile provided: ${companyProfile.company_name || 'unnamed'}`);
+    }
 
     const htmlSlides: string[] = [];
     const totalSlides = config.slides.length;
 
     for (let i = 0; i < config.slides.length; i++) {
       const slide = config.slides[i];
-      const html = this.generateSlide(slide, i, totalSlides);
+      const html = this.generateSlide(slide, i, totalSlides, companyProfile);
       htmlSlides.push(html);
     }
 
@@ -47,9 +52,15 @@ export class HtmlGeneratorService {
    * @param slide Configuração do slide
    * @param slideIndex Índice do slide (0-based)
    * @param totalSlides Total de slides no carousel
+   * @param companyProfile Optional company profile for dynamic corner elements
    * @returns HTML string completo
    */
-  private generateSlide(slide: SlideConfig, slideIndex: number = 0, totalSlides: number = 1): string {
+  private generateSlide(
+    slide: SlideConfig,
+    slideIndex: number = 0,
+    totalSlides: number = 1,
+    companyProfile?: CompanyProfile
+  ): string {
     console.log(`[HTML Generator] Generating slide: ${slide.id} (${slideIndex + 1}/${totalSlides})`);
 
     // Extract module IDs from slide config
@@ -65,9 +76,12 @@ export class HtmlGeneratorService {
       moduleOrder: slide.moduleOrder, // Preserve module rendering order
       visualLayout: slide.visualLayout, // Apply visual editor positions
       includeDataAttributes: false, // Disable for Puppeteer (no need for data attributes in final render)
+      enabledModules: enabledModuleIds, // Pass enabled modules for duo mode detection
       // Pass slide numbering info for corner elements with "contador" type (m/n format)
       slideIndex,
       totalSlides,
+      // Pass company profile for dynamic corner elements (@instagram, company_name, etc.)
+      companyProfile,
     };
 
     const composed: ComposedTemplate = composeTemplate(

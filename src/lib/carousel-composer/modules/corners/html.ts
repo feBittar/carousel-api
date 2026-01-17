@@ -1,4 +1,4 @@
-import { ModuleData, RenderContext } from '../types';
+import { ModuleData, CompositionOptions } from '../types';
 import { CornersData, Corner, DynamicSource } from './schema';
 
 /**
@@ -24,15 +24,16 @@ function resolveUrl(url: string, baseUrl?: string): string {
 
 /**
  * Helper to get dynamic data based on source
+ * Uses CompositionOptions which includes companyProfile for dynamic corner data
  */
-function getDynamicData(source: DynamicSource, context?: RenderContext): string {
-  const companyProfile = (context as any)?.companyProfile;
+function getDynamicData(source: DynamicSource, options?: CompositionOptions): string {
+  const companyProfile = options?.companyProfile;
 
   switch (source) {
     case 'slide_counter': {
-      const slideIndex = (context as any)?.currentSlideIndex ?? context?.slideIndex ?? 0;
+      const slideIndex = options?.currentSlideIndex ?? (options as any)?.slideIndex ?? 0;
       const currentSlide = slideIndex + 1;
-      const totalSlides = context?.totalSlides ?? 1;
+      const totalSlides = options?.totalSlides ?? 1;
       return `${currentSlide}/${totalSlides}`;
     }
     case 'company_name':
@@ -81,7 +82,7 @@ function getSvgContent(corner: Corner, baseUrl: string = '', isDynamic: boolean 
 /**
  * Helper to generate HTML for a single corner
  */
-function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', context?: RenderContext): string {
+function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', options?: CompositionOptions): string {
   if (corner.type === 'none') {
     return '';
   }
@@ -92,9 +93,9 @@ function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', 
   }
 
   if (corner.type === 'contador') {
-    const slideIndex = (context as any)?.currentSlideIndex ?? context?.slideIndex ?? 0;
+    const slideIndex = options?.currentSlideIndex ?? (options as any)?.slideIndex ?? 0;
     const currentSlide = slideIndex + 1;
-    const totalSlides = context?.totalSlides ?? 1;
+    const totalSlides = options?.totalSlides ?? 1;
     const contadorText = `${currentSlide}/${totalSlides}`;
     return `<span class="corner-${cornerNum}-text">${contadorText}</span>`;
   }
@@ -105,7 +106,7 @@ function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', 
 
   if (corner.type === 'dynamic') {
     const dynamicSource = (corner as any).dynamicSource || 'slide_counter';
-    const dynamicData = getDynamicData(dynamicSource, context);
+    const dynamicData = getDynamicData(dynamicSource, options);
 
     // If dynamic source is logo, render as SVG
     if (dynamicSource === 'logo' && dynamicData) {
@@ -127,24 +128,24 @@ function getCornerHtml(corner: Corner, cornerNum: number, baseUrl: string = '', 
 /**
  * Helper to check if duo mode is active
  */
-function isDuoModeActive(context?: RenderContext): boolean {
-  return context?.enabledModules?.includes('duo') ?? false;
+function isDuoModeActive(options?: CompositionOptions): boolean {
+  return options?.enabledModules?.includes('duo') ?? false;
 }
 
 /**
  * Generates HTML for the Corners Module
  */
-export function getCornersHtml(data: ModuleData, context?: RenderContext): string {
+export function getCornersHtml(data: ModuleData, options?: CompositionOptions): string {
   const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
-  const baseUrl = context?.baseUrl || '';
-  const isDuo = isDuoModeActive(context);
+  const baseUrl = options?.baseUrl || '';
+  const isDuo = isDuoModeActive(options);
 
   // Generate HTML for each corner
-  const corner1Content = getCornerHtml(corners[0], 1, baseUrl, context);
-  const corner2Content = getCornerHtml(corners[1], 2, baseUrl, context);
-  const corner3Content = getCornerHtml(corners[2], 3, baseUrl, context);
-  const corner4Content = getCornerHtml(corners[3], 4, baseUrl, context);
+  const corner1Content = getCornerHtml(corners[0], 1, baseUrl, options);
+  const corner2Content = getCornerHtml(corners[1], 2, baseUrl, options);
+  const corner3Content = getCornerHtml(corners[2], 3, baseUrl, options);
+  const corner4Content = getCornerHtml(corners[3], 4, baseUrl, options);
 
   if (isDuo) {
     // Duo mode: 8 corners (4 per slide) with -s1 and -s2 classes
@@ -177,14 +178,14 @@ export function getCornersHtml(data: ModuleData, context?: RenderContext): strin
  * Helper to generate corner content placeholders for template replacement
  * Used by legacy templates that inject corners via {{{corner1Content}}} syntax
  */
-export function getCornerPlaceholders(data: ModuleData, baseUrl: string = '', context?: RenderContext): Record<string, string> {
+export function getCornerPlaceholders(data: ModuleData, baseUrl: string = '', options?: CompositionOptions): Record<string, string> {
   const cornersData = data as unknown as CornersData;
   const { corners } = cornersData;
 
   return {
-    corner1Content: getCornerHtml(corners[0], 1, baseUrl, context),
-    corner2Content: getCornerHtml(corners[1], 2, baseUrl, context),
-    corner3Content: getCornerHtml(corners[2], 3, baseUrl, context),
-    corner4Content: getCornerHtml(corners[3], 4, baseUrl, context),
+    corner1Content: getCornerHtml(corners[0], 1, baseUrl, options),
+    corner2Content: getCornerHtml(corners[1], 2, baseUrl, options),
+    corner3Content: getCornerHtml(corners[2], 3, baseUrl, options),
+    corner4Content: getCornerHtml(corners[3], 4, baseUrl, options),
   };
 }

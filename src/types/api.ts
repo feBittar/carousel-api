@@ -1,4 +1,4 @@
-import { CarouselModularConfig } from '../lib/carousel-composer/types';
+import { CarouselModularConfig, CompanyProfile } from '../lib/carousel-composer/types';
 
 // Type alias for backward compatibility
 type CarouselConfig = CarouselModularConfig;
@@ -14,6 +14,7 @@ export interface GenerateCarouselRequest {
   carouselId: string;
   workspaceId: string;
   config: CarouselConfig;
+  companyProfile?: CompanyProfile; // Company profile for dynamic corner elements
 }
 
 /**

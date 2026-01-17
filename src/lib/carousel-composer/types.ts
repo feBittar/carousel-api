@@ -742,6 +742,24 @@ export interface ModuleDefinition {
 }
 
 /**
+ * Company Profile data for dynamic corner elements
+ * Used to inject company branding into carousel corners
+ */
+export interface CompanyProfile {
+  company_name?: string;
+  industry?: string;
+  social_media_handles?: {
+    instagram?: string;
+    linkedin?: string;
+    twitter?: string;
+    facebook?: string;
+    tiktok?: string;
+    youtube?: string;
+  };
+  logo_url?: string;
+}
+
+/**
  * Composition Options
  * Passed to HTML/CSS generators
  */
@@ -757,6 +775,8 @@ export interface CompositionOptions {
   moduleOrder?: string[]; // Order of content modules for rendering
   visualLayout?: VisualLayoutData; // Visual editor positions for absolute positioning
   includeDataAttributes?: boolean; // Add data-module-id attributes for visual editing
+  enabledModules?: string[]; // List of enabled modules (for duo mode detection)
+  companyProfile?: CompanyProfile; // Company profile data for dynamic corners
   freeImage?: {
     enabled: boolean;
     url: string;
@@ -1100,11 +1120,18 @@ export type ComposedTemplate = CompositionResult;
 /**
  * RenderContext - Context passed to module renderers
  * Provides slide-level and carousel-level information during rendering
+ *
+ * Note: For modules that need companyProfile data (like corners),
+ * they should use CompositionOptions instead which includes companyProfile.
+ * RenderContext is kept for backward compatibility with existing modules.
  */
 export interface RenderContext {
   slideIndex?: number;
   totalSlides?: number;
   carouselId?: string;
+  baseUrl?: string;
+  enabledModules?: string[];
+  companyProfile?: CompanyProfile; // Added for dynamic corner elements
   [key: string]: any;
 }
 

@@ -34,7 +34,7 @@ export class CarouselController {
 
     try {
       // 1. Validate request body
-      const { carouselId, workspaceId, config } = req.body as GenerateCarouselRequest;
+      const { carouselId, workspaceId, config, companyProfile } = req.body as GenerateCarouselRequest;
 
       if (!carouselId || !workspaceId || !config) {
         const errorResponse: GenerateCarouselErrorResponse = {
@@ -48,13 +48,19 @@ export class CarouselController {
       console.log(`[Controller] Carousel ID: ${carouselId}`);
       console.log(`[Controller] Workspace ID: ${workspaceId}`);
       console.log(`[Controller] Slides count: ${config.slides.length}`);
+      if (companyProfile) {
+        console.log(`[Controller] Company Profile: ${companyProfile.company_name || 'unnamed'}`);
+        if (companyProfile.social_media_handles?.instagram) {
+          console.log(`[Controller] Instagram Handle: @${companyProfile.social_media_handles.instagram}`);
+        }
+      }
 
       // 2. Validate config
       htmlGeneratorService.validateConfig(config);
 
-      // 3. Generate HTML for each slide
+      // 3. Generate HTML for each slide (pass companyProfile for dynamic corners)
       console.log('\n[Controller] 📝 Step 1/3: Generating HTML...');
-      const htmlSlides = htmlGeneratorService.generateCarousel(config);
+      const htmlSlides = htmlGeneratorService.generateCarousel(config, companyProfile);
 
       // 4. Render HTML to images using Puppeteer
       console.log('\n[Controller] 🖼️  Step 2/3: Rendering images...');

@@ -3,6 +3,19 @@ import { ImageTextBoxData } from './schema';
 import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
+ * Resolve placeholder color based on source
+ */
+function resolvePlaceholderColor(
+  colorSource: 'accent' | 'text' | 'custom',
+  customColor: string
+): string {
+  if (colorSource === 'custom') {
+    return customColor;
+  }
+  return customColor || '#cccccc';
+}
+
+/**
  * Helper to get left percentage from split ratio
  */
 function getLeftPercent(data: ImageTextBoxData): number {
@@ -56,6 +69,9 @@ export function getImageTextBoxCss(data: ModuleData): string {
     ? `0 0 ${boxData.imageConfig.shadow.blur}px ${boxData.imageConfig.shadow.spread}px ${boxData.imageConfig.shadow.color}`
     : 'none';
 
+  // Check if using placeholder mode
+  const isPlaceholder = boxData.imageConfig.imageType === 'placeholder';
+
   // Generate text field styles
   const textFieldStyles = boxData.textConfig.fields
     .slice(0, boxData.textConfig.count)
@@ -86,6 +102,105 @@ export function getImageTextBoxCss(data: ModuleData): string {
     })
     .filter(Boolean)
     .join('\n');
+
+  // Placeholder mode - render SVG placeholder instead of image
+  if (isPlaceholder) {
+    const color = resolvePlaceholderColor(
+      boxData.imageConfig.placeholderColorSource || 'accent',
+      boxData.imageConfig.placeholderCustomColor || '#cccccc'
+    );
+
+    return `
+    /* ===== IMAGE + TEXT BOX MODULE - PLACEHOLDER MODE (z-index: 7) ===== */
+    .image-text-box {
+      display: flex;
+      flex-direction: ${boxData.order === 'image-left' ? 'row' : 'row-reverse'};
+      width: ${boxData.width};
+      height: ${boxData.height};
+      gap: ${boxData.gap}px;
+      align-items: stretch;
+      flex-basis: ${boxData.layoutWidth};
+      align-self: ${boxData.alignSelf};
+      min-width: 0;
+      min-height: 0;
+      z-index: 7;
+      position: relative;
+      box-sizing: border-box;
+      flex-shrink: 1;
+    }
+
+    /* Image side - placeholder */
+    .image-text-box-image-side {
+      flex: 0 0 calc(${imagePercent}% - ${boxData.gap / 2}px);
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      padding-top: ${boxData.imageConfig.paddingTop ?? 0}px;
+      padding-right: ${boxData.imageConfig.paddingRight ?? 0}px;
+      padding-bottom: ${boxData.imageConfig.paddingBottom ?? 0}px;
+      padding-left: ${boxData.imageConfig.paddingLeft ?? 0}px;
+      box-sizing: border-box;
+      border-radius: ${boxData.imageConfig.borderRadius}px;
+    }
+
+    .image-text-box-image-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: ${boxData.imageConfig.borderRadius}px;
+      border: 2px solid ${color};
+      box-sizing: border-box;
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* SVG icon inside placeholder using mask */
+    .image-text-box-image-placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: ${color};
+      -webkit-mask-image: url('/placeholder-mono.svg');
+      mask-image: url('/placeholder-mono.svg');
+      -webkit-mask-size: 60%;
+      mask-size: 60%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      pointer-events: none;
+    }
+
+    /* Text side */
+    .image-text-box-text-side {
+      flex: 0 0 calc(${textPercent}% - ${boxData.gap / 2}px);
+      display: flex;
+      flex-direction: column;
+      gap: ${boxData.textConfig.gap}px;
+      justify-content: ${getJustifyContent(boxData.textConfig.verticalAlign)};
+      min-width: 0;
+      min-height: 0;
+      padding-top: ${boxData.textConfig.paddingTop ?? 0}px;
+      padding-right: ${boxData.textConfig.paddingRight ?? 0}px;
+      padding-bottom: ${boxData.textConfig.paddingBottom ?? 0}px;
+      padding-left: ${boxData.textConfig.paddingLeft ?? 0}px;
+      box-sizing: border-box;
+    }
+
+    /* Text field base styles */
+    .image-text-box-text-field {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    ${textFieldStyles}
+
+    /* Styled chunks with background colors */
+    .image-text-box-text-field span[style*="background-color"] {
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+  `;
+  }
 
   return `
     /* ===== IMAGE + TEXT BOX MODULE (z-index: 7) ===== */

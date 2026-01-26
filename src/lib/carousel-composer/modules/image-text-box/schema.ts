@@ -36,6 +36,15 @@ export const imageTextBoxImageConfigSchema = z.object({
   /** How the image fits in its container */
   objectFit: z.enum(['cover', 'contain', 'fill']).default('cover'),
 
+  /** Tipo de imagem: url (padrão) ou placeholder (SVG colorível) */
+  imageType: z.enum(['url', 'placeholder']).default('url'),
+
+  /** Fonte da cor do placeholder */
+  placeholderColorSource: z.enum(['accent', 'text', 'custom']).default('accent'),
+
+  /** Cor customizada (quando placeholderColorSource = 'custom') */
+  placeholderCustomColor: z.string().default('#cccccc'),
+
   /** Individual padding (pixels) */
   paddingTop: z.number().min(0).default(0),
   paddingRight: z.number().min(0).default(0),
@@ -223,6 +232,9 @@ export const imageTextBoxSchema = z.object({
     maxWidth: 100,
     maxHeight: 100,
     objectFit: 'cover',
+    imageType: 'url',
+    placeholderColorSource: 'accent',
+    placeholderCustomColor: '#cccccc',
     paddingTop: 0,
     paddingRight: 0,
     paddingBottom: 0,
@@ -270,6 +282,9 @@ export const imageTextBoxDefaults: ImageTextBoxData = {
     maxWidth: 100,
     maxHeight: 100,
     objectFit: 'cover',
+    imageType: 'url',
+    placeholderColorSource: 'accent',
+    placeholderCustomColor: '#cccccc',
     paddingTop: 0,
     paddingRight: 0,
     paddingBottom: 0,

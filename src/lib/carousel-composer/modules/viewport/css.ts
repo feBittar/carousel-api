@@ -19,28 +19,60 @@ export function getViewportCss(data: ModuleData, options?: CompositionOptions): 
   // CSS para o body (background principal)
   const bodyStyles: string[] = [];
 
-  // Background: imagem tem prioridade sobre cor
-  // FIX: Usar imagem se existir, mesmo que backgroundType esteja como 'color'
-  if (viewport.backgroundImage && viewport.backgroundImage.trim() !== '') {
-    bodyStyles.push(`background-image: url(${viewport.backgroundImage});`);
-    bodyStyles.push('background-size: cover;');
-    bodyStyles.push('background-position: center;');
-    bodyStyles.push('background-repeat: no-repeat;');
-    // Adiciona cor de fundo como fallback enquanto a imagem carrega
-    if (viewport.backgroundColor) {
-      bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
-    }
-  } else if (viewport.backgroundColor) {
+  // Background: cor ou imagem
+  if (viewport.backgroundType === 'color') {
     bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
+  } else if (viewport.backgroundType === 'image') {
+    // Check if using placeholder mode
+    const isPlaceholder = (viewport as any).backgroundImageType === 'placeholder';
+
+    if (isPlaceholder) {
+      // Placeholder mode: use CSS mask on a pseudo-element
+      bodyStyles.push('position: relative;');
+      bodyStyles.push(`background-color: ${viewport.backgroundColor || '#ffffff'};`);
+    } else if (viewport.backgroundImage) {
+      bodyStyles.push(`background-image: url(${viewport.backgroundImage});`);
+      bodyStyles.push('background-size: cover;');
+      bodyStyles.push('background-position: center;');
+      bodyStyles.push('background-repeat: no-repeat;');
+      if (viewport.backgroundColor) {
+        bodyStyles.push(`background-color: ${viewport.backgroundColor};`);
+      }
+    }
   }
 
   const bodyCss = bodyStyles.length > 0
     ? `body {\n  ${bodyStyles.join('\n  ')}\n}`
     : '';
 
+  // CSS for placeholder background (when backgroundImageType === 'placeholder')
+  let placeholderCss = '';
+  if (viewport.backgroundType === 'image' && (viewport as any).backgroundImageType === 'placeholder') {
+    const color = (viewport as any).placeholderCustomColor || '#cccccc';
+    placeholderCss = `
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: ${color};
+  -webkit-mask-image: url('/placeholder-mono.svg');
+  mask-image: url('/placeholder-mono.svg');
+  -webkit-mask-size: 50% 50%;
+  mask-size: 50% 50%;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}`;
+  }
+
   // CSS para ::before (blur overlay)
+  // Note: If placeholder mode is enabled, blur will be skipped since both use ::before
   let beforeCss = '';
-  if (viewport.blurEnabled && viewport.blurAmount > 0) {
+  const isPlaceholderMode = viewport.backgroundType === 'image' && (viewport as any).backgroundImageType === 'placeholder';
+  if (viewport.blurEnabled && viewport.blurAmount > 0 && !isPlaceholderMode) {
     beforeCss = `
 body::before {
   content: '';
@@ -58,11 +90,13 @@ body::before {
 }`;
   }
 
-  // CSS para ::after (gradient overlay)
+  // CSS para ::after (gradient overlay) - DISABLED when placeholder mode
   let afterCss = '';
   const gradient = viewport.gradientOverlay;
+  const isPlaceholderModeForGradient = viewport.backgroundType === 'image' && (viewport as any).backgroundImageType === 'placeholder';
 
-  if (gradient?.enabled && gradient.color) {
+  // Only show gradient if enabled AND not in placeholder mode
+  if (gradient?.enabled && gradient.color && !isPlaceholderModeForGradient) {
     const startOpacity = gradient.startOpacity ?? 0.7;
     const midOpacity = gradient.midOpacity ?? 0.3;
     const endOpacity = gradient.endOpacity ?? 0;
@@ -142,7 +176,7 @@ ${selector} {
 }`;
 
   // Combinar todos os CSS
-  const finalCss = [bodyCss, beforeCss, afterCss, contentWrapperCss].filter(Boolean).join('\n\n');
+  const finalCss = [bodyCss, placeholderCss, beforeCss, afterCss, contentWrapperCss].filter(Boolean).join('\n\n');
 
   // DEBUG: Log generated CSS
   console.log('[Viewport CSS] Generated CSS length:', finalCss.length);

@@ -75,8 +75,11 @@ export function getCardCss(data: ModuleData): string {
     return '';
   }
 
-  // Generate gradient CSS if enabled
-  const gradientCss = card.gradientOverlay?.enabled
+  // Detect placeholder mode
+  const isPlaceholder = (card as any).backgroundImageType === 'placeholder';
+
+  // Generate gradient CSS if enabled AND not in placeholder mode
+  const gradientCss = (card.gradientOverlay?.enabled && !isPlaceholder)
     ? generateGradientCss(card.gradientOverlay)
     : 'none';
 
@@ -96,7 +99,11 @@ export function getCardCss(data: ModuleData): string {
       width: ${card.width}%;
       height: ${card.height}%;
       background-color: ${card.backgroundType === 'color' ? card.backgroundColor : 'transparent'};
-      background-image: ${card.backgroundType === 'image' && card.backgroundImage ? `url(${card.backgroundImage})` : 'none'};
+      background-image: ${
+        isPlaceholder
+          ? 'none'  // Placeholder uses ::after pseudo-element
+          : (card.backgroundType === 'image' && card.backgroundImage ? `url(${card.backgroundImage})` : 'none')
+      };
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -127,7 +134,30 @@ export function getCardCss(data: ModuleData): string {
       background-image: ${gradientCss};
       pointer-events: none;
       z-index: 0;
-      display: ${card.gradientOverlay?.enabled ? 'block' : 'none'};
+      display: ${(card.gradientOverlay?.enabled && !isPlaceholder) ? 'block' : 'none'};
+      border-radius: ${card.borderRadius}px;
+    }
+
+    /* Card placeholder SVG pseudo-element */
+    .card-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: ${isPlaceholder ? ((card as any).placeholderCustomColor || '#cccccc') : 'transparent'};
+      -webkit-mask-image: ${isPlaceholder ? "url('/placeholder-mono.svg')" : 'none'};
+      mask-image: ${isPlaceholder ? "url('/placeholder-mono.svg')" : 'none'};
+      -webkit-mask-size: 50% 50%;
+      mask-size: 50% 50%;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+      display: ${isPlaceholder ? 'block' : 'none'};
       border-radius: ${card.borderRadius}px;
     }
   `;

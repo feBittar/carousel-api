@@ -82,12 +82,15 @@ export function getImageTextBoxHtml(data: ModuleData, context?: RenderContext): 
     return '';
   }
 
-  // Hide if no image URL
-  if (!boxData.imageConfig.url) {
+  // Check if using placeholder mode
+  const isPlaceholder = boxData.imageConfig.imageType === 'placeholder';
+
+  // Hide if no image URL and not in placeholder mode
+  if (!isPlaceholder && !boxData.imageConfig.url) {
     return '';
   }
 
-  const absoluteUrl = resolveUrl(boxData.imageConfig.url, context?.baseUrl);
+  const absoluteUrl = boxData.imageConfig.url ? resolveUrl(boxData.imageConfig.url, context?.baseUrl) : '';
 
   // Generate text fields HTML
   const textFieldsHtml = boxData.textConfig.fields
@@ -96,11 +99,20 @@ export function getImageTextBoxHtml(data: ModuleData, context?: RenderContext): 
     .filter(Boolean)
     .join('\n');
 
-  // Image side HTML
-  const imageSideHtml = `
+  // Image side HTML - placeholder or real image
+  let imageSideHtml: string;
+
+  if (isPlaceholder) {
+    imageSideHtml = `
+    <div class="image-text-box-image-side">
+      <div class="image-text-box-image-placeholder"></div>
+    </div>`;
+  } else {
+    imageSideHtml = `
     <div class="image-text-box-image-side">
       <img class="image-text-box-image" src="${absoluteUrl}" alt="Content" />
     </div>`;
+  }
 
   // Text side HTML
   const textSideHtml = `
@@ -109,7 +121,7 @@ ${textFieldsHtml}
     </div>`;
 
   return `
-  <!-- ===== IMAGE + TEXT BOX SECTION ===== -->
+  <!-- ===== IMAGE + TEXT BOX SECTION${isPlaceholder ? ' - PLACEHOLDER' : ''} ===== -->
   <div class="image-text-box">
     ${imageSideHtml}
     ${textSideHtml}

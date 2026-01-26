@@ -55,6 +55,15 @@ export const contentImageSchema = z.object({
   /** Second image URL for comparison mode */
   url2: z.string().default(''),
 
+  /** Tipo de imagem: url (padrão) ou placeholder (SVG colorível) */
+  imageType: z.enum(['url', 'placeholder']).default('url'),
+
+  /** Fonte da cor do placeholder */
+  placeholderColorSource: z.enum(['accent', 'text', 'custom']).default('accent'),
+
+  /** Cor customizada (quando placeholderColorSource = 'custom') */
+  placeholderCustomColor: z.string().default('#cccccc'),
+
   /** Layout width in horizontal card layouts (percentage or CSS value) */
   layoutWidth: z.string().default('50%'),
 

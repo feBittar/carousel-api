@@ -2,6 +2,19 @@ import { ModuleData } from '../types';
 import { ContentImageData } from './schema';
 
 /**
+ * Resolve placeholder color based on source
+ */
+function resolvePlaceholderColor(
+  colorSource: 'accent' | 'text' | 'custom',
+  customColor: string
+): string {
+  if (colorSource === 'custom') {
+    return customColor;
+  }
+  return customColor || '#cccccc';
+}
+
+/**
  * Generates CSS for the Content Image module
  */
 export function getContentImageCss(data: ModuleData): string {
@@ -20,6 +33,65 @@ export function getContentImageCss(data: ModuleData): string {
   const shadowCss = contentImage.shadow?.enabled
     ? `0 0 ${contentImage.shadow.blur}px ${contentImage.shadow.spread}px ${contentImage.shadow.color}`
     : 'none';
+
+  // Check if using placeholder mode
+  const isPlaceholder = (contentImage as any).imageType === 'placeholder';
+
+  if (isPlaceholder && contentImage.mode === 'single') {
+    const color = resolvePlaceholderColor(
+      (contentImage as any).placeholderColorSource || 'accent',
+      (contentImage as any).placeholderCustomColor || '#cccccc'
+    );
+
+    return `
+      /* ===== CONTENT IMAGE MODULE - PLACEHOLDER MODE (z-index: 5) ===== */
+      .content-image-section {
+        flex: 0 1 auto;
+        flex-basis: ${contentImage.layoutWidth || 'auto'};
+        align-self: ${contentImage.alignSelf || 'stretch'};
+        min-width: 0;
+        flex-shrink: 1;
+        z-index: 5;
+        position: relative;
+        display: flex;
+        min-height: 0;
+        overflow: hidden;
+        align-items: ${getAlignItemsValue(contentImage.position)};
+        justify-content: center;
+      }
+
+      .content-image-placeholder {
+        width: 100%;
+        height: 100%;
+        max-width: ${contentImage.maxWidth}%;
+        max-height: ${contentImage.maxHeight}%;
+        border-radius: ${contentImage.borderRadius}px;
+        border: 2px solid ${color};
+        box-sizing: border-box;
+        position: relative;
+        aspect-ratio: 1;
+        cursor: pointer;
+      }
+
+      /* SVG icon inside placeholder using mask */
+      .content-image-placeholder::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: ${color};
+        -webkit-mask-image: url('/placeholder-mono.svg');
+        mask-image: url('/placeholder-mono.svg');
+        -webkit-mask-size: 60%;
+        mask-size: 60%;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        pointer-events: none;
+      }
+
+    `;
+  }
 
   // Single image mode CSS
   if (contentImage.mode === 'single') {

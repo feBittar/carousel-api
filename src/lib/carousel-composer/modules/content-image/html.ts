@@ -40,6 +40,19 @@ export function getContentImageHtml(data: ModuleData, context?: RenderContext): 
   if (!contentImage.url && !contentImage.url2) {
   }
 
+  // Check if using placeholder mode
+  const isPlaceholder = (contentImage as any).imageType === 'placeholder';
+
+  // Placeholder mode (single only)
+  if (isPlaceholder && contentImage.mode === 'single') {
+    return `
+      <!-- ===== CONTENT IMAGE SECTION - PLACEHOLDER ===== -->
+      <div class="content-image-section">
+        <div class="content-image-placeholder"></div>
+      </div>
+    `;
+  }
+
   // Single image mode
   if (contentImage.mode === 'single') {
     return `

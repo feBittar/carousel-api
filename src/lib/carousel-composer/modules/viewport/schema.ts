@@ -47,6 +47,15 @@ export const viewportSchema = z.object({
   // URL da imagem de fundo (quando backgroundType = 'image')
   backgroundImage: z.string().default(''),
 
+  // Tipo de background quando backgroundType='image'
+  backgroundImageType: z.enum(['url', 'placeholder']).default('url'),
+
+  // Fonte da cor do placeholder de background
+  placeholderColorSource: z.enum(['accent', 'text', 'background', 'custom']).default('accent'),
+
+  // Cor customizada do placeholder
+  placeholderCustomColor: z.string().default('#cccccc'),
+
   // Blur overlay (backdrop-filter)
   blurEnabled: z.boolean().default(false),
   blurAmount: z.number().min(0).max(50).default(10), // em px
@@ -73,6 +82,9 @@ export const viewportDefaults: ViewportData = {
   backgroundType: 'color',
   backgroundColor: '#ffffff',
   backgroundImage: '',
+  backgroundImageType: 'url',
+  placeholderColorSource: 'accent',
+  placeholderCustomColor: '#cccccc',
   blurEnabled: false,
   blurAmount: 10,
   gradientOverlay: {

@@ -28,13 +28,12 @@ import { isLightColor, calculateHighlightColor } from '../../wcag-utils';
  * Check if a slide has a background image (viewport or card)
  *
  * @param slide - Slide to check
- * @returns true if viewport or card has backgroundType='image' with a backgroundImage URL or placeholder
+ * @returns true if viewport or card has backgroundType='image' with a backgroundImage URL
  */
 export function slideHasBackgroundImage(slide: CarouselSlide): boolean {
   const viewport = slide.modules?.viewport as any;
   const card = slide.modules?.card as any;
 
-  // Check for real image OR placeholder mode (both need palette inversion for text contrast)
   const viewportHasImage = viewport?.backgroundType === 'image' &&
     (!!viewport?.backgroundImage || viewport?.backgroundImageType === 'placeholder');
   const cardHasImage = card?.backgroundType === 'image' &&
@@ -56,8 +55,8 @@ export function slideHasBackgroundImage(slide: CarouselSlide): boolean {
  * @returns Effective background color as hex string
  */
 function getSlideBackgroundColor(slide: CarouselSlide, palette: ColorPalette): string {
-  const card = slide.modules?.card;
-  const viewport = slide.modules?.viewport;
+  const card = slide.modules?.card as any;
+  const viewport = slide.modules?.viewport as any;
 
   // Priority 1: Card background (if using color type)
   if (card?.backgroundType === 'color' && card?.backgroundColor) {
@@ -108,6 +107,16 @@ export function selectPaletteForSlide(
 ): ColorPalette {
   const hasBgImage = slideHasBackgroundImage(slide);
 
+  const viewport = slide.modules?.viewport as any;
+  console.log('[selectPaletteForSlide] Checking slide:', {
+    slideId: slide.id,
+    hasModules: !!slide.modules,
+    hasViewport: !!viewport,
+    viewportBgType: viewport?.backgroundType,
+    viewportBgImage: typeof viewport?.backgroundImage === 'string' ? viewport.backgroundImage.substring(0, 50) : viewport?.backgroundImage?.url?.substring(0, 50),
+    hasBgImage,
+  });
+
   if (!hasBgImage) {
     return primaryPalette;
   }
@@ -117,6 +126,14 @@ export function selectPaletteForSlide(
 
   const primaryHasLightText = isLightColor(primaryPalette.text);
   const secondaryHasLightText = isLightColor(secondary.text);
+
+  console.log('[selectPaletteForSlide] Palette analysis:', {
+    primaryText: primaryPalette.text,
+    primaryHasLightText,
+    secondaryText: secondary.text,
+    secondaryHasLightText,
+    selectedPalette: primaryHasLightText ? 'primary' : (secondaryHasLightText ? 'secondary' : 'secondary-fallback'),
+  });
 
   // Prefer the palette with light text for background images
   if (primaryHasLightText) {
@@ -288,17 +305,6 @@ function updateViewportColors(
     updated.backgroundColor = palette.background;
   }
 
-  // Update placeholder color if using placeholder mode
-  // Two colors needed:
-  // 1. backgroundColor = opposite of text (for contrast)
-  // 2. placeholderCustomColor = highlight/accent color (same as styled chunks)
-  if (viewport.backgroundImageType === 'placeholder') {
-    // Background = opposite of text color
-    updated.backgroundColor = palette.background;
-    // SVG icon = accent/highlight color (same as styled chunks background)
-    updated.placeholderCustomColor = palette.accent;
-  }
-
   // NOTE: gradientOverlay.color is NOT updated with palette colors
   // Gradients should maintain their original colors or be controlled separately
 
@@ -331,17 +337,6 @@ function updateCardColors(
   // Update background color if using color type
   if (card.backgroundType === 'color') {
     updated.backgroundColor = palette.background;
-  }
-
-  // Update placeholder color if using placeholder mode
-  // Two colors needed:
-  // 1. backgroundColor = opposite of text (for contrast)
-  // 2. placeholderCustomColor = highlight/accent color (same as styled chunks)
-  if (card.backgroundImageType === 'placeholder') {
-    // Background = opposite of text color
-    updated.backgroundColor = palette.background;
-    // SVG icon = accent/highlight color (same as styled chunks background)
-    updated.placeholderCustomColor = palette.accent;
   }
 
   // NOTE: gradientOverlay.color is NOT updated with palette colors
@@ -403,7 +398,7 @@ function updateStyledChunkColors(
 
     // IMPORTANT: Apply accent color to chunks with useAccentColor flag
     // This flag is set by AI generation for highlighted words
-    if (chunk.useAccentColor && !chunk.color) {
+    if ((chunk as any).useAccentColor && !chunk.color) {
       updated.color = palette.accent;
     }
     // Update text color if intentional (for manually colored chunks)
@@ -457,7 +452,7 @@ function updateTextFieldColors(
   if (updated.style) {
     updated.style = {
       ...updated.style,
-      color: field.useAccentColor ? palette.accent : palette.text,
+      color: (field as any).useAccentColor ? palette.accent : palette.text,
     };
 
     // Update background color with adaptive highlight color
@@ -630,7 +625,7 @@ function updateImageTextBoxModuleColors(
         if (updated.style) {
           updated.style = {
             ...updated.style,
-            color: field.useAccentColor ? palette.accent : palette.text,
+            color: (field as any).useAccentColor ? palette.accent : palette.text,
           };
 
           // Update background color with adaptive highlight color
@@ -722,21 +717,6 @@ export function applyPaletteToSlide(
       updated.modules.card,
       palette
     );
-  }
-
-  // Update contentImage placeholder colors
-  if (updated.modules.contentImage) {
-    const contentImage = updated.modules.contentImage as any;
-    if (contentImage.imageType === 'placeholder') {
-      const source = contentImage.placeholderColorSource || 'accent';
-      if (source === 'accent') {
-        contentImage.placeholderCustomColor = palette.accent;
-      } else if (source === 'text') {
-        contentImage.placeholderCustomColor = palette.text;
-      }
-      // 'custom' source keeps the existing placeholderCustomColor
-      updated.modules.contentImage = contentImage;
-    }
   }
 
   // Extract effective background color AFTER viewport and card are updated
@@ -880,13 +860,13 @@ export function extractSlideColors(slide: CarouselSlide): string[] {
   // Extract from viewport
   if (slide.modules.viewport) {
     addColor(slide.modules.viewport.backgroundColor);
-    addColor(slide.modules.viewport.gradientOverlay?.color);
+    addColor((slide.modules.viewport as any).gradientOverlay?.color);
   }
 
   // Extract from card
   if (slide.modules.card) {
     addColor(slide.modules.card.backgroundColor);
-    addColor(slide.modules.card.gradientOverlay?.color);
+    addColor((slide.modules.card as any).gradientOverlay?.color);
   }
 
   // Extract from textFields

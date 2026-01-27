@@ -651,6 +651,51 @@ function updateImageTextBoxModuleColors(
   };
 }
 
+/**
+ * Updates twitterPost module colors with palette.
+ *
+ * Applies:
+ * - palette.text -> textStyle.color (post text), headerNameColor, headerUsernameColor
+ * - palette.accent -> verifiedBadgeColor
+ * - Adaptive highlight color -> styledChunks backgroundColor
+ *
+ * Preserves all other properties (avatar, username, stats, etc.)
+ */
+function updateTwitterPostModuleColors(
+  twitterPost: any,
+  palette: ColorPalette,
+  slideBackgroundColor: string
+): any {
+  if (!twitterPost) return twitterPost;
+
+  const updated = { ...twitterPost };
+
+  // Update post text color - ensure textStyle exists
+  if (!updated.textStyle) {
+    updated.textStyle = {};
+  }
+  updated.textStyle = {
+    ...updated.textStyle,
+    color: palette.text,
+  };
+
+  // Update header colors from palette
+  updated.headerNameColor = palette.text;
+  updated.headerUsernameColor = palette.text; // CSS will apply opacity/lighter variant
+  updated.verifiedBadgeColor = palette.accent;
+
+  // Update styled chunks (post text highlights)
+  if (updated.styledChunks && updated.styledChunks.length > 0) {
+    updated.styledChunks = updateStyledChunkColors(
+      updated.styledChunks,
+      palette,
+      slideBackgroundColor
+    );
+  }
+
+  return updated;
+}
+
 export function applyPaletteToSlide(
   slide: CarouselSlide,
   palette: ColorPalette
@@ -704,13 +749,22 @@ export function applyPaletteToSlide(
       slideBackgroundColor
     );
   }
+
+  // Update twitterPost module
+  if (updated.modules.twitterPost) {
+    updated.modules.twitterPost = updateTwitterPostModuleColors(
+      updated.modules.twitterPost,
+      palette,
+      slideBackgroundColor
+    );
+  }
+
   // Future: Add support for other modules with color properties
   // - arrowBottomText (color, arrowColor)
   // - bullets (color, bulletColor)
   // - duo (backgroundColor per side)
   // - freeText (color, backgroundColor)
   // - svgElements (color per element)
-  // - twitterPost (backgroundColor)
 
   return updated;
 }

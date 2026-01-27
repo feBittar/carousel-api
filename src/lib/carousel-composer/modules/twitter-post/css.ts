@@ -1,299 +1,219 @@
-import { ModuleData, RenderContext } from '../types';
+import { ModuleData, CompositionOptions } from '../../types';
 import { TwitterPostData } from './schema';
+import { formatFontFamily } from '../../utils/fontHelpers';
 
 /**
- * Generates CSS for the Twitter Post module
- * Supports both Twitter (old blue theme) and X (new dark theme)
+ * Generates CSS for the Twitter Post module (Minimal Mode)
+ * Creates a minimal Twitter/X post with compact header and large text
  * @param data Module data
- * @param context Render context
+ * @param options Composition options
  */
-export function getTwitterPostCss(data: ModuleData, context?: RenderContext): string {
-  const moduleData = data as unknown as TwitterPostData;
+export function getTwitterPostCss(data: ModuleData, options?: CompositionOptions): string {
+  const moduleData = data as TwitterPostData;
 
   // If disabled, hide the module
   if (!moduleData.enabled) {
     return `
       /* Twitter Post Module - Disabled */
-      .twitter-post-module {
+      .twitter-post-module-minimal {
         display: none;
       }
     `;
   }
 
-  const { scale, position, platform } = moduleData;
+  const {
+    platform,
+    verticalAlign,
+    headerTop,
+    textTop,
+    textPadding,
+    textStyle,
+    postImageEnabled,
+    postImageBorderRadius,
+    headerNameColor,
+    headerUsernameColor,
+    verifiedBadgeColor,
+  } = moduleData;
+
+  // Get viewport dimensions from options or use defaults
+  const viewportWidth = options?.viewportWidth || 1080;
+  const viewportHeight = options?.viewportHeight || 1350;
+
+  // Calculate horizontal padding in pixels
+  const paddingX = (viewportWidth * textPadding) / 100;
+
   const isTwitter = platform === 'twitter';
 
-  // Color schemes based on platform
-  const colors = isTwitter
-    ? {
-        primary: '#1DA1F2',         // Twitter Blue
-        background: '#FFFFFF',      // White
-        text: '#14171A',            // Dark text
-        secondary: '#657786',       // Gray text
-        border: '#E1E8ED',          // Light gray border
-        hover: '#1A8CD8',           // Darker blue on hover
-        verified: '#1DA1F2',        // Blue checkmark
-      }
-    : {
-        primary: '#000000',         // X Black
-        background: '#000000',      // Dark background
-        text: '#E7E9EA',            // Light text
-        secondary: '#71767B',       // Gray text
-        border: '#2F3336',          // Dark gray border
-        hover: '#1D1F23',           // Lighter on hover
-        verified: '#1D9BF0',        // X Blue verification
-      };
+  // Header sizes (Alex Hormozi style - BIG and bold)
+  const avatarSize = 110;
+  const nameSize = 42;
+  const usernameSize = 32;
+  const verifiedSize = 38;
+
+  // Color schemes - use palette colors if available, fallback to platform defaults
+  const nameColor = headerNameColor || '#000000';
+  const usernameColor = headerUsernameColor || (isTwitter ? '#657786' : '#71767B');
+  const verifiedColor = verifiedBadgeColor || (isTwitter ? '#1DA1F2' : '#1D9BF0');
+
+  // Text styles from schema
+  const style = textStyle || {};
+
+  // Vertical alignment mapping
+  const alignmentMap = {
+    top: 'flex-start',
+    center: 'center',
+    bottom: 'flex-end',
+  };
+  const justifyContent = alignmentMap[verticalAlign || 'top'];
+
+  // Use absolute positioning only for 'top' alignment (for fine-tune control)
+  const useAbsolutePositioning = verticalAlign === 'top';
+
+  // Calculate header height for center compensation (avatar + gap)
+  const headerHeight = avatarSize + 40; // 110 + 40 = 150px
+
+  // Build container styles
+  // For 'center': add extra padding-bottom to compensate for header,
+  // so the visual center is on the text, not the header+text block
+  const containerStyles = useAbsolutePositioning
+    ? ''
+    : `display: flex;
+      flex-direction: column;
+      justify-content: ${justifyContent};
+      padding: ${paddingX}px;
+      padding-bottom: ${verticalAlign === 'center' ? (paddingX + headerHeight) : paddingX}px;
+      gap: 40px;`;
+
+  // Build header styles
+  const headerStyles = useAbsolutePositioning
+    ? `position: absolute;
+      top: ${headerTop}px;
+      left: ${paddingX}px;
+      right: ${paddingX}px;`
+    : '';
+
+  // Build text styles
+  const textStyles = useAbsolutePositioning
+    ? `position: absolute;
+      top: ${textTop}px;
+      left: ${paddingX}px;
+      right: ${paddingX}px;
+      bottom: ${paddingX}px;`
+    : `flex-shrink: 0;
+      width: 100%;`;
 
   return `
-    /* ===== TWITTER/X POST MODULE (z-index: 100) ===== */
+    /* ===== TWITTER/X POST MODULE - MINIMAL MODE (z-index: 15) ===== */
 
-    /* Container positioning */
-    .twitter-post-module {
+    /* Main container (full canvas with flexbox for vertical alignment) */
+    .twitter-post-module-minimal {
       position: absolute;
-      top: ${position.top};
-      left: ${position.left};
-      transform: ${position.transform} scale(${scale || 1.5});
-      transform-origin: center center;
-      z-index: 100;
-      width: 598px; /* Twitter's standard post width */
-      /* Note: No max-width/height constraints - let content determine size */
-      /* Overflow is controlled by parent containers (body, card-container) */
-    }
-
-    /* Platform indicator - for conditional styling */
-    .twitter-post-module[data-platform="${platform}"] {
-      /* Platform-specific overrides can go here */
-    }
-
-    /* Tweet card */
-    .twitter-post-card {
-      background-color: ${colors.background};
-      border: 1px solid ${colors.border};
-      border-radius: ${isTwitter ? '16px' : '16px'};
-      padding: ${isTwitter ? '16px' : '12px 16px'};
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 15;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      box-shadow: ${
-        isTwitter
-          ? 'rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px'
-          : 'rgba(255, 255, 255, 0.1) 0px 0px 15px, rgba(255, 255, 255, 0.05) 0px 0px 3px 1px'
-      };
+      ${containerStyles}
     }
 
-    /* Main wrapper with flexbox */
-    .twitter-post-wrapper {
-      display: flex;
-      gap: 12px;
-    }
-
-    /* Avatar section */
-    .twitter-post-avatar {
-      flex-shrink: 0;
-      width: 48px;
-      height: 48px;
-    }
-
-    .twitter-post-avatar-img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      background-color: ${colors.border};
-    }
-
-    /* Content section */
-    .twitter-post-content {
-      flex: 1;
-      min-width: 0; /* Prevents flex overflow */
-    }
-
-    /* Header section */
-    .twitter-post-header {
+    /* Compact Header */
+    .twitter-header-minimal {
+      ${headerStyles}
       display: flex;
       align-items: center;
-      gap: 4px;
-      margin-bottom: 4px;
+      gap: 20px;
+      z-index: 16;
+      flex-shrink: 0;
+    }
+
+    .twitter-header-avatar {
+      width: ${avatarSize}px;
+      height: ${avatarSize}px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #e1e8ed;
+      flex-shrink: 0;
+    }
+
+    .twitter-header-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
-      line-height: 20px;
     }
 
-    .twitter-post-display-name {
-      font-size: 15px;
-      font-weight: 700;
-      color: ${colors.text};
+    .twitter-header-name {
+      font-size: ${nameSize}px;
+      font-weight: 900;
+      color: ${nameColor};
     }
 
-    /* Verified badge */
-    .twitter-post-verified {
+    .twitter-header-verified {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
-      margin-left: 2px;
+      width: ${verifiedSize}px;
+      height: ${verifiedSize}px;
     }
 
-    .twitter-post-verified svg {
-      width: 18px;
-      height: 18px;
-      fill: ${colors.verified};
+    .twitter-header-verified svg {
+      width: ${verifiedSize}px;
+      height: ${verifiedSize}px;
+      fill: ${verifiedColor};
     }
 
-    .twitter-post-username,
-    .twitter-post-timestamp {
-      font-size: 15px;
+    .twitter-header-username {
+      font-size: ${usernameSize}px;
       font-weight: 400;
-      color: ${colors.secondary};
+      color: ${usernameColor};
     }
 
-    .twitter-post-timestamp::before {
-      content: "·";
-      margin: 0 4px;
-      color: ${colors.secondary};
-    }
-
-    /* Tweet text */
-    .twitter-post-text {
-      font-size: 15px;
-      font-weight: 400;
-      line-height: 20px;
-      color: ${colors.text};
-      margin-bottom: 12px;
+    /* Main Text (fills canvas with styling from textStyle) */
+    .twitter-post-text-main {
+      ${textStyles}
+      font-family: ${formatFontFamily(style.fontFamily || 'Arial')};
+      font-size: ${style.fontSize || '48px'};
+      font-weight: ${style.fontWeight || '700'};
+      color: ${style.color || '#000000'};
+      text-align: ${style.textAlign || 'left'};
+      line-height: ${style.lineHeight || '1.2'};
+      letter-spacing: ${style.letterSpacing || '0'};
+      text-transform: ${style.textTransform || 'none'};
       word-wrap: break-word;
-      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      z-index: 15;
+      ${style.textShadow ? `text-shadow: ${style.textShadow};` : ''}
+      ${style.textDecoration ? `text-decoration: ${style.textDecoration};` : ''}
     }
 
-    /* Tweet media */
-    .twitter-post-media {
-      margin-top: 12px;
-      margin-bottom: 12px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid ${colors.border};
+    /* Styled chunks with background colors (same as textFields) */
+    .twitter-post-text-main span[style*="background-color"] {
+      padding: 2px 4px;
+      border-radius: 2px;
     }
 
-    .twitter-post-media-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      max-height: 510px;
-      object-fit: cover;
-    }
-
-    /* Action icons */
-    .twitter-post-actions {
-      display: flex;
-      justify-content: space-between;
-      max-width: 425px;
-      margin-top: 12px;
-      gap: 8px;
-    }
-
-    .twitter-post-action-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 8px;
-      border-radius: 9999px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: ${colors.secondary};
-      font-size: 13px;
-      transition: all 0.2s ease;
-      font-family: inherit;
-    }
-
-    .twitter-post-action-btn svg {
-      width: 18.75px;
-      height: 18.75px;
-      fill: currentColor;
-    }
-
-    /* Platform-specific hover states */
-    ${
-      isTwitter
-        ? `
-    .twitter-post-action-btn.reply:hover {
-      background-color: rgba(29, 161, 242, 0.1);
-      color: #1da1f2;
-    }
-
-    .twitter-post-action-btn.retweet:hover {
-      background-color: rgba(0, 186, 124, 0.1);
-      color: #00ba7c;
-    }
-
-    .twitter-post-action-btn.like:hover {
-      background-color: rgba(249, 24, 128, 0.1);
-      color: #f91880;
-    }
-
-    .twitter-post-action-btn.views:hover {
-      background-color: rgba(29, 161, 242, 0.1);
-      color: #1da1f2;
-    }
-    `
-        : `
-    .twitter-post-action-btn.reply:hover {
-      background-color: rgba(29, 155, 240, 0.1);
-      color: #1d9bf0;
-    }
-
-    .twitter-post-action-btn.retweet:hover {
-      background-color: rgba(0, 186, 124, 0.1);
-      color: #00ba7c;
-    }
-
-    .twitter-post-action-btn.like:hover {
-      background-color: rgba(249, 24, 128, 0.1);
-      color: #f91880;
-    }
-
-    .twitter-post-action-btn.views:hover {
-      background-color: rgba(29, 155, 240, 0.1);
-      color: #1d9bf0;
-    }
-    `
-    }
-
-    .twitter-post-action-count {
-      font-size: 13px;
-      font-weight: 400;
-      min-width: 20px;
-      text-align: left;
-    }
-
-    /* Logo styling */
-    .twitter-post-logo {
-      width: 20px;
-      height: 20px;
-      margin-right: 8px;
-    }
-
-    .twitter-post-logo.twitter-logo svg {
-      fill: #1DA1F2;
-    }
-
-    .twitter-post-logo.x-logo svg {
-      fill: ${isTwitter ? '#000000' : '#FFFFFF'};
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 640px) {
-      .twitter-post-module {
+    /* Post Image (Twitter-style attached media) */
+    .twitter-post-image-container {
+      ${useAbsolutePositioning ? `
+        position: absolute;
+        left: ${paddingX}px;
+        right: ${paddingX}px;
+        bottom: ${paddingX}px;
+      ` : `
+        flex-shrink: 0;
         width: 100%;
-        max-width: calc(100vw - 32px);
-      }
+        margin-top: 20px;
+      `}
+      z-index: 15;
     }
 
-    /* Smooth transitions for theme changes */
-    .twitter-post-card,
-    .twitter-post-display-name,
-    .twitter-post-text,
-    .twitter-post-username,
-    .twitter-post-timestamp,
-    .twitter-post-action-btn {
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    .twitter-post-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: ${postImageBorderRadius ?? 16}px;
+      border: 1px solid #e1e8ed;
     }
   `;
 }

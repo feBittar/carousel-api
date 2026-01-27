@@ -1,5 +1,6 @@
 import { ModuleData } from '../../types';
 import { CardData, SpecialPosition } from './schema';
+import { PLACEHOLDER_SVG_DATA_URI } from '../../utils/placeholderSvg';
 
 /**
  * Get CSS positioning based on special position
@@ -147,8 +148,8 @@ export function getCardCss(data: ModuleData): string {
       right: 0;
       bottom: 0;
       background-color: ${isPlaceholder ? ((card as any).placeholderCustomColor || '#cccccc') : 'transparent'};
-      -webkit-mask-image: ${isPlaceholder ? "url('/placeholder-mono.svg')" : 'none'};
-      mask-image: ${isPlaceholder ? "url('/placeholder-mono.svg')" : 'none'};
+      -webkit-mask-image: ${isPlaceholder ? `url('${PLACEHOLDER_SVG_DATA_URI}')` : 'none'};
+      mask-image: ${isPlaceholder ? `url('${PLACEHOLDER_SVG_DATA_URI}')` : 'none'};
       -webkit-mask-size: 50% 50%;
       mask-size: 50% 50%;
       -webkit-mask-position: center;

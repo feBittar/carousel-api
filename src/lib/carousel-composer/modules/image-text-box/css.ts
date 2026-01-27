@@ -1,6 +1,7 @@
 import { ModuleData } from '../types';
 import { ImageTextBoxData } from './schema';
 import { formatFontFamily } from '../../utils/fontHelpers';
+import { PLACEHOLDER_SVG_DATA_URI } from '../../utils/placeholderSvg';
 
 /**
  * Resolve placeholder color based on source
@@ -159,8 +160,8 @@ export function getImageTextBoxCss(data: ModuleData): string {
       position: absolute;
       inset: 0;
       background-color: ${color};
-      -webkit-mask-image: url('/placeholder-mono.svg');
-      mask-image: url('/placeholder-mono.svg');
+      -webkit-mask-image: url('${PLACEHOLDER_SVG_DATA_URI}');
+      mask-image: url('${PLACEHOLDER_SVG_DATA_URI}');
       -webkit-mask-size: 60%;
       mask-size: 60%;
       -webkit-mask-repeat: no-repeat;

@@ -1,5 +1,6 @@
 import { ModuleData, CompositionOptions } from '../../types';
 import { ViewportData } from './schema';
+import { PLACEHOLDER_SVG_DATA_URI } from '../../utils/placeholderSvg';
 
 /**
  * Gera CSS para o módulo Viewport
@@ -55,8 +56,8 @@ body::before {
   position: absolute;
   inset: 0;
   background-color: ${color};
-  -webkit-mask-image: url('/placeholder-mono.svg');
-  mask-image: url('/placeholder-mono.svg');
+  -webkit-mask-image: url('${PLACEHOLDER_SVG_DATA_URI}');
+  mask-image: url('${PLACEHOLDER_SVG_DATA_URI}');
   -webkit-mask-size: 50% 50%;
   mask-size: 50% 50%;
   -webkit-mask-position: center;

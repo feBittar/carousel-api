@@ -792,6 +792,8 @@ export interface CompositionOptions {
       size: number;
     };
   };
+  /** Effective slide background color (from viewport/card) for depth effect on highlights */
+  slideBackgroundColor?: string;
 }
 
 /**

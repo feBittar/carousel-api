@@ -61,6 +61,7 @@ export function getBulletsHtml(data: ModuleData, context?: RenderContext): strin
           backgroundColor: item.textStyle?.backgroundColor,
           padding: item.textStyle?.padding,
           textAlign: item.textStyle?.textAlign,
+          slideBackgroundColor: (context as any)?.slideBackgroundColor,
         };
 
         processedText = applyStyledChunks(

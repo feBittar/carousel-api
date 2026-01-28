@@ -40,7 +40,7 @@ function escapeHtml(text: string): string {
 /**
  * Generate HTML for a single text field
  */
-function renderTextField(field: ImageTextBoxTextField, index: number): string {
+function renderTextField(field: ImageTextBoxTextField, index: number, context?: RenderContext): string {
   if (!field.content) return '';
 
   let processedContent = field.content;
@@ -57,6 +57,7 @@ function renderTextField(field: ImageTextBoxTextField, index: number): string {
       backgroundColor: field.style?.backgroundColor,
       padding: field.style?.padding,
       textAlign: field.style?.textAlign,
+      slideBackgroundColor: (context as any)?.slideBackgroundColor,
     };
 
     processedContent = applyStyledChunks(
@@ -95,7 +96,7 @@ export function getImageTextBoxHtml(data: ModuleData, context?: RenderContext): 
   // Generate text fields HTML
   const textFieldsHtml = boxData.textConfig.fields
     .slice(0, boxData.textConfig.count)
-    .map((field, index) => renderTextField(field, index))
+    .map((field, index) => renderTextField(field, index, context))
     .filter(Boolean)
     .join('\n');
 

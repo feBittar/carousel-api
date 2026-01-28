@@ -235,6 +235,7 @@ export interface ParentStyles {
   backgroundColor?: string; // Cor de fundo herdável
   padding?: string; // Padding herdável
   textAlign?: string; // Alinhamento de texto herdável
+  slideBackgroundColor?: string; // Cor de fundo do slide (viewport/card) para efeito de profundidade
 }
 
 /**
@@ -310,8 +311,15 @@ export function applyStyledChunks(
     // Estratégia: aplicar apenas estilos do pai que o chunk NÃO sobrescreve
     // Isso evita lógica redundante de splice/remove
 
-    // 1. Color (prioridade: chunk > parent)
-    if (chunk.color) {
+    // 1. Color (prioridade: depth effect > chunk > parent)
+    // "Depth effect": when chunk has backgroundColor (highlight/grifo),
+    // override text color with slide background color for visual depth
+    if (chunk.backgroundColor && parentStyles?.slideBackgroundColor) {
+      const color = sanitizeColor(parentStyles.slideBackgroundColor);
+      if (color) {
+        styles.push(`color:${color}`);
+      }
+    } else if (chunk.color) {
       const color = sanitizeColor(chunk.color);
       if (color) {
         styles.push(`color:${color}`);

@@ -251,6 +251,14 @@ export function composeTemplate(
     viewportHeight = defaultViewportHeight;
   }
 
+  // Extract effective slide background color for depth effect on highlights
+  const cardDataForBg = moduleData.card as any;
+  const viewportDataForBg = moduleData.viewport as any;
+  const slideBackgroundColor =
+    (cardDataForBg?.backgroundType === 'color' && cardDataForBg?.backgroundColor) ? cardDataForBg.backgroundColor :
+    (viewportDataForBg?.backgroundType === 'color' && viewportDataForBg?.backgroundColor) ? viewportDataForBg.backgroundColor :
+    undefined;
+
   // Update composition options with baseUrl and viewport dimensions
   const fullOptions: CompositionOptions & { moduleOrder?: string[] } = {
     ...options, // Spread first to get defaults
@@ -261,6 +269,7 @@ export function composeTemplate(
     carouselMode,
     slideCount,
     freeImage: freeImageConfig, // Override with VALIDATED config
+    slideBackgroundColor,
   };
 
   // Step 1: Collect CSS variables from all modules

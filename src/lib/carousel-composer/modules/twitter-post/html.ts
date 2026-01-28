@@ -121,6 +121,7 @@ export function getTwitterPostHtml(data: ModuleData, options?: CompositionOption
       letterSpacing: textStyle?.letterSpacing,
       lineHeight: textStyle?.lineHeight,
       textAlign: textStyle?.textAlign,
+      slideBackgroundColor: options?.slideBackgroundColor,
     };
 
     textContent = applyStyledChunks(

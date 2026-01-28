@@ -29,6 +29,7 @@ export function getTextFieldsHtml(data: ModuleData, options?: CompositionOptions
           backgroundColor: field.style?.backgroundColor,
           padding: field.style?.padding,
           textAlign: field.style?.textAlign,
+          slideBackgroundColor: options?.slideBackgroundColor,
         };
 
         processedContent = applyStyledChunks(
